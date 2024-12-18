@@ -1,0 +1,14 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -O3 -fPIC -I./PQClean/common
+TARGET = /home/jonas/Projekte/PQCleanTest2/build/libmceliece460896.so
+COMMON_SRCS = /home/jonas/Projekte/PQCleanTest2/PQClean/common/*.c
+
+IMPL_SRCS = ./PQClean/crypto_kem/mceliece460896/clean/*.c
+
+all: $(TARGET)
+
+$(TARGET): $(IMPL_SRCS) $(COMMON_SRCS)
+	$(CC) -shared $(CFLAGS) -o $@ $(IMPL_SRCS) $(COMMON_SRCS)
+
+clean:
+	rm -f $(TARGET)

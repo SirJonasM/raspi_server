@@ -1,0 +1,14 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -O3 -fPIC -I./PQClean/common
+TARGET = /home/jonas/Projekte/PQCleanTest2/build/libsphincs-sha256-128f-robust.so
+COMMON_SRCS = /home/jonas/Projekte/PQCleanTest2/PQClean/common/*.c
+
+IMPL_SRCS = ./PQClean/crypto_sign/sphincs-sha256-128f-robust/clean/*.c
+
+all: $(TARGET)
+
+$(TARGET): $(IMPL_SRCS) $(COMMON_SRCS)
+	$(CC) -shared $(CFLAGS) -o $@ $(IMPL_SRCS) $(COMMON_SRCS)
+
+clean:
+	rm -f $(TARGET)
