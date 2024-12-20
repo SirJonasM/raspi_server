@@ -55,17 +55,17 @@ def initialize_keys():
             },
         "rainbowIclassic": {
             "sign_algorithm": rainbowIclassic_lib.PQCLEAN_RAINBOWICLASSIC_CLEAN_crypto_sign_signature,
-            "sign_keys": generate_keypair(*KEY_SIZES["rainbowIclassic"],rainbowI_lib.PQCLEAN_RAINBOWICLASSIC_CLEAN_crypto_sign_keypair, "rainbowIclassic" ),
+            "sign_keys": generate_keypair(*KEY_SIZES["rainbowIclassic"],rainbowIclassic_lib.PQCLEAN_RAINBOWICLASSIC_CLEAN_crypto_sign_keypair, "rainbowIclassic" ),
             "sign_bytes": 66 
             },
         "rainbowIIIclassic": {
             "sign_algorithm": rainbowIIIclassic_lib.PQCLEAN_RAINBOWIIICLASSIC_CLEAN_crypto_sign_signature,
-            "sign_keys": generate_keypair(*KEY_SIZES["rainbowIIIclassic"],rainbowIII_lib.PQCLEAN_RAINBOWIIICLASSIC_CLEAN_crypto_sign_keypair, "rainbowIIIclassic" ),
+            "sign_keys": generate_keypair(*KEY_SIZES["rainbowIIIclassic"],rainbowIIIclassic_lib.PQCLEAN_RAINBOWIIICLASSIC_CLEAN_crypto_sign_keypair, "rainbowIIIclassic" ),
             "sign_bytes": 164 
             },
         "rainbowVclassic": {
             "sign_algorithm": rainbowVclassic_lib.PQCLEAN_RAINBOWVCLASSIC_CLEAN_crypto_sign_signature,
-            "sign_keys": generate_keypair(*KEY_SIZES["rainbowVclassic"],rainbowV_lib.PQCLEAN_RAINBOWVCLASSIC_CLEAN_crypto_sign_keypair, "rainbowVclassic" ),
+            "sign_keys": generate_keypair(*KEY_SIZES["rainbowVclassic"],rainbowVclassic_lib.PQCLEAN_RAINBOWVCLASSIC_CLEAN_crypto_sign_keypair, "rainbowVclassic" ),
             "sign_bytes": 212 
             },
         }
