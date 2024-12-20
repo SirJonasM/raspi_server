@@ -69,7 +69,7 @@ def main():
     for type_name, library_name in sign_libraries:
         api_path = SIGN_DIR + os.sep + library_name + os.sep + "clean" + os.sep + "api.h"
         with open(api_path, "r") as api_file:
-            
+            api_file
 
 
     all_libraries = kem_libraries + sign_libraries
