@@ -1,5 +1,6 @@
 import os
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 
 # Directory where all the Makefiles are stored
 MAKEFILES_DIR = "./Makefiles"
@@ -11,9 +12,9 @@ def run_makefile(makefile_path):
     try:
         print(f"Building {makefile_path}...")
         subprocess.run(
-            ["make", "-f", makefile_path], 
-            check=True, 
-            stdout=subprocess.PIPE, 
+            ["make", "-f", makefile_path],
+            check=True,
+            stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
         print(f"Successfully built {makefile_path}")
@@ -23,18 +24,23 @@ def run_makefile(makefile_path):
 
 def build_all_makefiles():
     """
-    Finds and runs all Makefiles in the MAKEFILES_DIR.
+    Finds and runs all Makefiles in the MAKEFILES_DIR using multiple threads.
     """
     # Ensure the directory exists
     if not os.path.exists(MAKEFILES_DIR):
         print(f"Directory {MAKEFILES_DIR} does not exist.")
         return
 
-    # Iterate through all Makefiles in the directory
-    for filename in os.listdir(MAKEFILES_DIR):
-        if filename.startswith("Makefile."):  # Ensure it's a Makefile
-            makefile_path = os.path.join(MAKEFILES_DIR, filename)
-            run_makefile(makefile_path)
+    # Collect all Makefile paths
+    makefile_paths = [
+        os.path.join(MAKEFILES_DIR, filename)
+        for filename in os.listdir(MAKEFILES_DIR)
+        if filename.startswith("Makefile.")  # Ensure it's a Makefile
+    ]
+
+    # Run all Makefiles in parallel
+    with ThreadPoolExecutor() as executor:
+        executor.map(run_makefile, makefile_paths)
 
 if __name__ == "__main__":
     build_all_makefiles()

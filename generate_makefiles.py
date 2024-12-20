@@ -8,8 +8,8 @@ SIGN_DIR = os.path.join(BASE_DIR, "crypto_sign")
 # Template for the Makefile
 MAKEFILE_TEMPLATE = """CC = gcc
 CFLAGS = -Wall -Wextra -O3 -fPIC -I./PQClean/common
-TARGET = /home/jonas/Projekte/PQCleanTest2/build/lib{target}
-COMMON_SRCS = /home/jonas/Projekte/PQCleanTest2/PQClean/common/*.c
+TARGET = ./build/{type}/lib{target}
+COMMON_SRCS = ./PQClean/common/*.c
 
 IMPL_SRCS = ./PQClean/{type}/{library}/clean/*.c
 
@@ -75,8 +75,8 @@ def main():
     all_libraries = kem_libraries + sign_libraries
 
     # Generate Makefiles for each library
-    #for type_name, library_name in all_libraries:
-    #    create_makefile(type_name, library_name)
+    for type_name, library_name in all_libraries:
+        create_makefile(type_name, library_name)
 
 if __name__ == "__main__":
     main()
