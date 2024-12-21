@@ -5,7 +5,7 @@ cd raspi_server
 git submodule init
 git submodule update
 pip install -r requirements.txt
-python generate_makefiles.py
+python generate_make_files.py
 python run_make_files.py
 python app.py
 ```
