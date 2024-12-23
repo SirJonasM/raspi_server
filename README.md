@@ -7,7 +7,8 @@ git submodule update
 pip install -r requirements.txt
 python generate_make_files.py
 python run_make_files.py
+```
+# Running the server:
+```
 python app.py
 ```
-
-
