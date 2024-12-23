@@ -6,6 +6,7 @@ edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
+
 [dependencies]
-pqc_kyber = {version = "0.7.1", features = ["std", "kyber1024"]}
+pqc_kyber = {version = "0.7.1", features = ["std"]}
 rand = "0.8.5"

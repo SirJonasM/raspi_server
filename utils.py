@@ -54,8 +54,7 @@ def get_client_public_key(request):
     return bytes.fromhex(data['client_public_key'])
 
  
-def handle(client_public_key, encapsulation_algorithm, cipher_text_bytes, shared_secret_bytes, sign_algorithm, sign_keys, sign_bytes):
-    sign_public_key, sign_private_key = sign_keys
+def handle(client_public_key, encapsulation_algorithm, cipher_text_bytes, shared_secret_bytes, sign_algorithm, sign_public_key, sign_private_key, sign_bytes):
     
     encapsulated_key, shared_secret,  encapsulation_timings = encapsulate_key(client_public_key, encapsulation_algorithm, cipher_text_bytes, shared_secret_bytes)
     
@@ -82,10 +81,10 @@ def handle(client_public_key, encapsulation_algorithm, cipher_text_bytes, shared
     }
 
 
-def handle_message(request, kem_algorithm, kem_cipher_text_bytes, kem_shared_secret_bytes, sign_algorithm, sign_keys, sign_bytes):
+def handle_message(request, kem_algorithm, kem_cipher_text_bytes, kem_shared_secret_bytes, sign_algorithm, public_key, private_key, sign_bytes):
     try:
         client_public_key = get_client_public_key(request)
-        response = handle(client_public_key, kem_algorithm, kem_cipher_text_bytes, kem_shared_secret_bytes, sign_algorithm, sign_keys, sign_bytes)
+        response = handle(client_public_key, kem_algorithm, kem_cipher_text_bytes, kem_shared_secret_bytes, sign_algorithm, public_key, private_key, sign_bytes)
         return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
