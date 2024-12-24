@@ -7,20 +7,20 @@ from Crypto.Util.Padding import pad
 
 
 def hash_message(message, timings):
-    t = time.time()
+    t = time.time_ns()
     message = message.encode() if isinstance(message, str) else message
     hash_obj = hashlib.sha3_256()
     hash_obj.update(message)
-    t = time.time() - t
+    t = time.time_ns() - t
     timings["client_hash_time"] = t
     return hash_obj.digest()
 
 
 def read_and_encrypt_file(aes_key, raw_data, timings):
-    start_time = time.time()
+    start_time = time.time_ns()
     cipher = AES.new(aes_key, AES.MODE_CBC)
     ciphertext = cipher.encrypt(pad(raw_data, AES.block_size))
-    timings["encryption_time"] = time.time() - start_time
+    timings["encryption_time"] = time.time_ns() - start_time
     return ciphertext, cipher.iv
 
 
@@ -31,13 +31,13 @@ def encapsulate_key(
     shared_secret_bytes,
     timings,
 ):
-    start_time = time.time()
+    start_time = time.time_ns()
     encapsulated_key = ctypes.create_string_buffer(cipher_text_bytes)
     shared_secret = ctypes.create_string_buffer(shared_secret_bytes)
     result = encapsulate_algorithm(encapsulated_key, shared_secret, client_public_key)
     if result != 0:
         raise ValueError("Encapsulation failed")
-    timings["encapsulate_key"] = time.time() - start_time
+    timings["encapsulate_key"] = time.time_ns() - start_time
 
     return encapsulated_key.raw, shared_secret.raw
 
@@ -126,11 +126,11 @@ def send_data(
 def sign_message(message, sign_algorithm, private_key, signature_bytes, timings):
     signature = ctypes.create_string_buffer(signature_bytes)
     sig_len = ctypes.c_size_t()
-    start_time = time.time()
+    start_time = time.time_ns()
     result = sign_algorithm(
         signature, ctypes.byref(sig_len), message, len(message), private_key
     )
     if result != 0:
         raise ValueError("Signing failed")
-    timings["sign_time"] = time.time() - start_time
+    timings["sign_time"] = time.time_ns() - start_time
     return signature.raw[: sig_len.value]

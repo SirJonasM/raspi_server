@@ -8,25 +8,23 @@ from libs_server import SIGNATURE_ALGORITHMS, KEM_ALGORITHMS
 import csv
 
 
-def hash_message(message):
-    t = time.time()
+def hash_message(message, timings):
+    t = time.time_ns()
     message = message.encode() if isinstance(message, str) else message
     hash_obj = hashlib.sha3_256()
     hash_obj.update(message)
-    t = time.time() - t
-    return hash_obj.digest(), t
+    timings["server_hash_time"] = time.time_ns() - t
+    return hash_obj.digest()
 
 
 def verify_signature(
     sign_algorithm_name, cipher_text, signature, sign_pub_key, timings
 ):
-    hashed_cipher_text, hash_time = hash_message(cipher_text)
-    timings["server_hash_time"] = hash_time
+    hashed_cipher_text = hash_message(cipher_text)
     verify_signature_algo = SIGNATURE_ALGORITHMS[sign_algorithm_name][
         "verify_algorithm"
     ]
 
-    # Convert inputs to ctypes
     sig_ptr = (ctypes.c_uint8 * len(signature)).from_buffer_copy(signature)
     sig_len = ctypes.c_size_t(len(signature))
 
@@ -37,10 +35,8 @@ def verify_signature(
 
     pk_ptr = (ctypes.c_uint8 * len(sign_pub_key)).from_buffer_copy(sign_pub_key)
 
-    # Start timing the verification
-    start_time = time.time()
+    start_time = time.time_ns()
 
-    # Call the C function
     result = verify_signature_algo(
         sig_ptr,
         sig_len,
@@ -49,16 +45,15 @@ def verify_signature(
         pk_ptr,
     )
 
-    # Record the verification time
-    timings["verify_time"] = time.time() - start_time
+    timings["verify_time"] = time.time_ns() - start_time
     return result == 0
 
 
 def decrypt_message(aes_key, iv, cipher_text, timings):
-    start_time = time.time()
+    start_time = time.time_ns()
     cipher = AES.new(aes_key, AES.MODE_CBC, iv)
     message = unpad(cipher.decrypt(cipher_text), AES.block_size)
-    timings["decrypt_time"] = time.time() - start_time
+    timings["decrypt_time"] = time.time_ns() - start_time
     return message.decode("utf-8")
 
 
@@ -74,11 +69,11 @@ def decapsulate_aes_key(secret_key_encrypted, kem_algo_name, timings):
     )
     sk_ptr = (ctypes.c_uint8 * len(kem_private_key)).from_buffer_copy(kem_private_key)
 
-    start_time = time.time()
+    start_time = time.time_ns()
 
     result = kem_algo(ss_buffer, ct_ptr, sk_ptr)
 
-    timings["decapsulation_time"] = time.time() - start_time
+    timings["decapsulation_time"] = time.time_ns() - start_time
 
     if result != 0:
         raise ValueError(f"Decapsulation failed with error code {result}")
