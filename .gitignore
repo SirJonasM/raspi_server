@@ -1,6 +1,6 @@
-__pycache__
-.venv
+Makefiles/
+__pycache__/
+build/
 data.json
-build
-Makefiles
-rust/target
+rust/target/
+*.csv
