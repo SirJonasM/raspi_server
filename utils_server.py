@@ -20,7 +20,7 @@ def hash_message(message, timings):
 def verify_signature(
     sign_algorithm_name, cipher_text, signature, sign_pub_key, timings
 ):
-    hashed_cipher_text = hash_message(cipher_text)
+    hashed_cipher_text = hash_message(cipher_text, timings)
     verify_signature_algo = SIGNATURE_ALGORITHMS[sign_algorithm_name][
         "verify_algorithm"
     ]

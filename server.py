@@ -49,7 +49,7 @@ def write_csv_header(output_file="timings.csv"):
         writer = csv.writer(csvfile)
         writer.writerow(header)
 
+write_csv_header()
 
 if __name__ == "__main__":
-    write_csv_header()
     app.run()
