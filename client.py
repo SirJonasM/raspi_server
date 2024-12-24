@@ -42,5 +42,6 @@ def test():
 
 if __name__ == "__main__":
     start_scheduler()
-    while run():
-        pass
+    i = 0
+    while run() and  i < 10_000:
+        i+=1
