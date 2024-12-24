@@ -11,8 +11,7 @@ def hash_message(message, timings):
     message = message.encode() if isinstance(message, str) else message
     hash_obj = hashlib.sha3_256()
     hash_obj.update(message)
-    t = time.time_ns() - t
-    timings["client_hash_time"] = t
+    timings["client_hash_time"] = time.time_ns() - t
     return hash_obj.digest()
 
 
