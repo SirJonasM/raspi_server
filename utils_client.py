@@ -6,6 +6,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 import json
 
+
 def hash_message(message, timings):
     t = time.time_ns()
     message = message.encode() if isinstance(message, str) else message
@@ -54,6 +55,7 @@ def get_client_public_key(kem_name):
 
 
 def get_data_to_send(
+    raw_data,
     server_public_key,
     encapsulation_algorithm,
     cipher_text_bytes,
@@ -71,9 +73,6 @@ def get_data_to_send(
         shared_secret_bytes,
         timings,
     )
-    with open("data.json", "r") as f:
-        raw_data = json.dumps(json.load(f)).encode("utf-8")
-    # raw_data = b"Some Text to encrypt."
     ciphertext, iv = read_and_encrypt_file(shared_secret[:32], raw_data, timings)
     hashed_ciphertext = hash_message(ciphertext, timings)
 
@@ -91,6 +90,7 @@ def get_data_to_send(
 
 
 def send_data(
+    raw_data,
     kem_algo_name,
     kem_algorithm,
     kem_cipher_text_bytes,
@@ -103,6 +103,7 @@ def send_data(
 ):
     client_public_key = get_client_public_key(kem_algo_name)
     payload = get_data_to_send(
+        raw_data,
         client_public_key,
         kem_algorithm,
         kem_cipher_text_bytes,
@@ -119,6 +120,7 @@ def send_data(
     data = response.json()
     if not data or "message" not in data:
         raise ValueError("Missing 'server_public_key' in response")
+    return data["message"]
 
 
 def sign_message(message, sign_algorithm, private_key, signature_bytes, timings):

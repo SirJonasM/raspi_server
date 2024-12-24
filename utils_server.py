@@ -59,8 +59,8 @@ def decrypt_message(aes_key, iv, cipher_text, timings):
 
 def decapsulate_aes_key(secret_key_encrypted, kem_algo_name, timings):
     kem_algo_info = KEM_ALGORITHMS[kem_algo_name]
-    kem_private_key = kem_algo_info["kem_private_key"]
-    kem_algo = kem_algo_info["kem_algorithm"]
+    kem_private_key = kem_algo_info["private_key"]
+    kem_algo = kem_algo_info["decapsulation_algorithm"]
     kem_algo_secret_bytes = kem_algo_info["shared_secret_bytes"]
     ss_buffer = ctypes.create_string_buffer(kem_algo_secret_bytes)
 
