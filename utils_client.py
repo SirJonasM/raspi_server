@@ -4,7 +4,8 @@ import ctypes
 import hashlib
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
-import json
+
+ENDPOINT = "http://192.168.178.98:5000"
 
 
 def hash_message(message, timings):
@@ -42,12 +43,9 @@ def encapsulate_key(
     return encapsulated_key.raw, shared_secret.raw
 
 
-endpoint = "http://192.168.178.98:5000"
-
-
 def get_client_public_key(kem_name):
     payload = {"kem_name": kem_name}
-    response = requests.post(f"{endpoint}/keys", json=payload)
+    response = requests.post(f"{ENDPOINT}/keys", json=payload)
     data = response.json()
     if not data or "server_public_key" not in data:
         raise ValueError("Missing 'server_public_key' in response")
@@ -116,7 +114,7 @@ def send_data(
 
     payload["kem_algo_name"] = kem_algo_name
     payload["sign_algorithm_name"] = sign_algorithm_name
-    response = requests.post(f"{endpoint}", json=payload)
+    response = requests.post(f"{ENDPOINT}", json=payload)
     data = response.json()
     if not data or "message" not in data:
         raise ValueError("Missing 'server_public_key' in response")
