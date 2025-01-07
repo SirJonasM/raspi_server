@@ -16,7 +16,7 @@ def run():
             try:
                 send_data(
                     raw_data,
-                    kem_algorithm["name"],
+                    kem_algorithm["identifier"],
                     kem_algorithm["encapsulation_algorithm"],
                     kem_algorithm["cipher_text_bytes"],
                     kem_algorithm["shared_secret_bytes"],
@@ -27,7 +27,7 @@ def run():
                     sign_algorithm["signature_bytes"],
                 )
             except Exception as e:
-                print("Error with", kem_algorithm["name"], str(e))
+                print("Error with", kem_algorithm["identifier"], str(e))
                 return False
     return True
 

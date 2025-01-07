@@ -112,7 +112,7 @@ def send_data(
         sign_bytes,
     )
 
-    payload["kem_algo_name"] = kem_algo_name
+    payload["kem_algorithm"] = kem_algo_name
     payload["sign_algorithm_name"] = sign_algorithm_name
     response = requests.post(f"{ENDPOINT}", json=payload)
     data = response.json()
