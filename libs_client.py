@@ -22,7 +22,7 @@ rainbowVclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowV-classic.so")
 KEM_ALGORITHMS = {
     "kyber512rust": {
         "identifier": "kyber512rust",
-        "encapsulat_algorithm": kyber512rust_lib.encapsulate_key,
+        "encapsulation_algorithm": kyber512rust_lib.encapsulate_key,
         "cipher_text_bytes": 768,
         "shared_secret_bytes": 32,
         "public_key_bytes": 800,
@@ -30,7 +30,7 @@ KEM_ALGORITHMS = {
     },
     "kyber768rust": {
         "identifier": "kyber768rust",
-        "encapsulat_algorithm": kyber768rust_lib.encapsulate_key,
+        "encapsulation_algorithm": kyber768rust_lib.encapsulate_key,
         "cipher_text_bytes": 1088,
         "shared_secret_bytes": 32,
         "public_key_bytes": 2400,
@@ -38,7 +38,7 @@ KEM_ALGORITHMS = {
     },
     "kyber1024rust": {
         "identifier": "kyber1024rust",
-        "encapsulat_algorithm": kyber1024rust_lib.encapsulate_key,
+        "encapsulation_algorithm": kyber1024rust_lib.encapsulate_key,
         "cipher_text_bytes": 1568,
         "shared_secret_bytes": 32,
         "public_key_bytes": 1568,
@@ -46,7 +46,7 @@ KEM_ALGORITHMS = {
     },
     "kyber512": {
         "identifier": "kyber512",
-        "encapsulat_algorithm": kyber512_lib.PQCLEAN_KYBER512_CLEAN_crypto_kem_enc,
+        "encapsulation_algorithm": kyber512_lib.PQCLEAN_KYBER512_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 768,
         "shared_secret_bytes": 32,
         "public_key_bytes": 800,
@@ -54,7 +54,7 @@ KEM_ALGORITHMS = {
     },
     "kyber768": {
         "identifier": "kyber768",
-        "encapsulat_algorithm": kyber768_lib.PQCLEAN_KYBER768_CLEAN_crypto_kem_enc,
+        "encapsulation_algorithm": kyber768_lib.PQCLEAN_KYBER768_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 1088,
         "shared_secret_bytes": 32,
         "public_key_bytes": 2400,
@@ -62,7 +62,7 @@ KEM_ALGORITHMS = {
     },
     "kyber1024": {
         "identifier": "kyber1024",
-        "encapsulat_algorithm": kyber1024_lib.PQCLEAN_KYBER1024_CLEAN_crypto_kem_enc,
+        "encapsulation_algorithm": kyber1024_lib.PQCLEAN_KYBER1024_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 1568,
         "shared_secret_bytes": 32,
         "public_key_bytes": 1568,
@@ -70,7 +70,7 @@ KEM_ALGORITHMS = {
     },
     "hqc-rmrs-128": {
         "identifier": "hqc-rmrs-128",
-        "encapsulat_algorithm": hqcrmrs128_lib.PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_enc,
+        "encapsulation_algorithm": hqcrmrs128_lib.PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 4481,
         "shared_secret_bytes": 64,
         "public_key_bytes": 2249,
@@ -78,7 +78,7 @@ KEM_ALGORITHMS = {
     },
     "hqc-rmrs-192": {
         "identifier": "hqc-rmrs-192",
-        "encapsulat_algorithm": hqcrmrs192_lib.PQCLEAN_HQCRMRS192_CLEAN_crypto_kem_enc,
+        "encapsulation_algorithm": hqcrmrs192_lib.PQCLEAN_HQCRMRS192_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 9026,
         "shared_secret_bytes": 64,
         "public_key_bytes": 4522,
@@ -86,7 +86,7 @@ KEM_ALGORITHMS = {
     },
     "hqc-rmrs-256": {
         "identifier": "hqc-rmrs-256",
-        "encapsulat_algorithm": hqcrmrs256_lib.PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_enc,
+        "encapsulation_algorithm": hqcrmrs256_lib.PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 14469,
         "shared_secret_bytes": 64,
         "public_key_bytes": 2249,
