@@ -36,7 +36,7 @@ def generate_keypair(public_key_size, secret_key_size, algo, name):
 KEM_ALGORITHMS = {
     "kyber512rust": {
         "identifier": "kyber512rust",
-        "decapulation_algorithm": kyber512rust_lib.decapsulate_key,
+        "decapsulation_algorithm": kyber512rust_lib.decapsulate_key,
         "keypair_algorithm": kyber512rust_lib.generate_keypair,
         **generate_keypair(
             800, 1632, kyber512rust_lib.generate_keypair, "kyber512rust"
@@ -48,7 +48,7 @@ KEM_ALGORITHMS = {
     },
     "kyber768rust": {
         "identifier": "kyber768rust",
-        "decapulation_algorithm": kyber768rust_lib.decapsulate_key,
+        "decapsulation_algorithm": kyber768rust_lib.decapsulate_key,
         "keypair_algorithm": kyber768rust_lib.generate_keypair,
         **generate_keypair(
             1184, 2400, kyber768rust_lib.generate_keypair, "kyber768rust"
@@ -60,7 +60,7 @@ KEM_ALGORITHMS = {
     },
     "kyber1024rust": {
         "identifier": "kyber1024rust",
-        "decapulation_algorithm": kyber1024rust_lib.decapsulate_key,
+        "decapsulation_algorithm": kyber1024rust_lib.decapsulate_key,
         "keypair_algorithm": kyber1024rust_lib.generate_keypair,
         **generate_keypair(
             1568, 3168, kyber1024rust_lib.generate_keypair, "kyber1024rust"
@@ -72,7 +72,7 @@ KEM_ALGORITHMS = {
     },
     "kyber512": {
         "identifier": "kyber512",
-        "decapulation_algorithm": kyber512_lib.PQCLEAN_KYBER512_CLEAN_crypto_kem_dec,
+        "decapsulation_algorithm": kyber512_lib.PQCLEAN_KYBER512_CLEAN_crypto_kem_dec,
         "keypair_algorithm": kyber512_lib.PQCLEAN_KYBER512_CLEAN_crypto_kem_keypair,
         **generate_keypair(
             800,
@@ -87,7 +87,7 @@ KEM_ALGORITHMS = {
     },
     "kyber768": {
         "identifier": "kyber768",
-        "decapulation_algorithm": kyber768_lib.PQCLEAN_KYBER768_CLEAN_crypto_kem_dec,
+        "decapsulation_algorithm": kyber768_lib.PQCLEAN_KYBER768_CLEAN_crypto_kem_dec,
         "keypair_algorithm": kyber768_lib.PQCLEAN_KYBER768_CLEAN_crypto_kem_keypair,
         **generate_keypair(
             1184,
@@ -102,7 +102,7 @@ KEM_ALGORITHMS = {
     },
     "kyber1024": {
         "identifier": "kyber1024",
-        "decapulation_algorithm": kyber1024_lib.PQCLEAN_KYBER1024_CLEAN_crypto_kem_dec,
+        "decapsulation_algorithm": kyber1024_lib.PQCLEAN_KYBER1024_CLEAN_crypto_kem_dec,
         "keypair_algorithm": kyber1024_lib.PQCLEAN_KYBER1024_CLEAN_crypto_kem_keypair,
         **generate_keypair(
             1568,
@@ -117,7 +117,7 @@ KEM_ALGORITHMS = {
     },
     "hqc-rmrs-128": {
         "identifier": "hqc-rmrs-128",
-        "decapulation_algorithm": hqcrmrs128_lib.PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_dec,
+        "decapsulation_algorithm": hqcrmrs128_lib.PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_dec,
         "keypair_algorithm": hqcrmrs128_lib.PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_keypair,
         **generate_keypair(
             2249,
@@ -132,7 +132,7 @@ KEM_ALGORITHMS = {
     },
     "hqc-rmrs-192": {
         "identifier": "hqc-rmrs-192",
-        "decapulation_algorithm": hqcrmrs192_lib.PQCLEAN_HQCRMRS192_CLEAN_crypto_kem_dec,
+        "decapsulation_algorithm": hqcrmrs192_lib.PQCLEAN_HQCRMRS192_CLEAN_crypto_kem_dec,
         "keypair_algorithm": hqcrmrs192_lib.PQCLEAN_HQCRMRS192_CLEAN_crypto_kem_keypair,
         **generate_keypair(
             4522,
@@ -147,7 +147,7 @@ KEM_ALGORITHMS = {
     },
     "hqc-rmrs-256": {
         "identifier": "hqc-rmrs-256",
-        "decapulation_algorithm": hqcrmrs256_lib.PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_dec,
+        "decapsulation_algorithm": hqcrmrs256_lib.PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_dec,
         "keypair_algorithm": hqcrmrs256_lib.PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_keypair,
         **generate_keypair(
             7245,
