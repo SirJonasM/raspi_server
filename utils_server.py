@@ -132,6 +132,6 @@ def handle_client_message(
 
 
 def get_kem_key(kem_name):
-    key = KEM_ALGORITHMS[kem_name]["kem_public_key"]
+    key = KEM_ALGORITHMS[kem_name]["public_key"]
 
     return jsonify({"server_public_key": key.hex()})

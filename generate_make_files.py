@@ -73,7 +73,7 @@ def main():
 
 
     all_libraries = kem_libraries + sign_libraries
-
+    
     # Generate Makefiles for each library
     for type_name, library_name in all_libraries:
         create_makefile(type_name, library_name)
