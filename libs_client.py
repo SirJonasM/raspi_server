@@ -18,18 +18,6 @@ falcon1024_lib = ctypes.CDLL("./build/crypto_sign/libfalcon-1024.so")
 rainbowIclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowI-classic.so")
 rainbowIIIclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowIII-classic.so")
 rainbowVclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowV-classic.so")
-    "kyber768rust": {
-        "kem_algorithm_name": "kyber768rust",
-        "kem_algorithm": kyber768rust_lib.decapsulate_key,
-        "kem_key_pair": kyber768rust_lib.generate_keypair,
-        **generate_keypair(
-            1184, 2400, kyber768rust_lib.generate_keypair, "kyber768rust"
-        ),
-        "kem_cipher_text_bytes": 1088,
-        "shared_secret_bytes": 32,
-        "kem_public_key_bytes": 2400,
-        "kem_private_key_bytes": 1184,
-    },
 
 KEM_ALGORITHMS = {
     "kyber512rust": {
