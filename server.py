@@ -5,6 +5,17 @@ import csv
 app = Flask(__name__)
 
 
+def write_csv_header():
+    """Writes the header to the CSV file if it doesn't already exist."""
+    try:
+        with open("key_generation_times_server.csv", "x", newline="") as csvfile:
+            writer = csv.writer(csvfile, delimiter=";")
+            writer.writerow(["Name", "Time"])
+    except FileExistsError:
+        # File already exists, no need to write the header
+        pass
+
+
 @app.route("/", methods=["POST"])
 def home():
     data = request.json
@@ -49,7 +60,6 @@ def write_csv_header(output_file="timings.csv"):
         writer = csv.writer(csvfile)
         writer.writerow(header)
 
-write_csv_header()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000, debug=False)

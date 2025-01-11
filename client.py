@@ -2,6 +2,19 @@ from libs_client import KEM_ALGORITHMS, SIGNATURE_ALGORITHMS
 from utils_client import send_data
 from scheduler import start_scheduler
 import json
+import csv
+import time
+
+
+def write_csv_header():
+    """Writes the header to the CSV file if it doesn't already exist."""
+    try:
+        with open("key_generation_times_client.csv", "x", newline="") as csvfile:
+            writer = csv.writer(csvfile, delimiter=";")
+            writer.writerow(["Name", "Time"])
+    except FileExistsError:
+        # File already exists, no need to write the header
+        pass
 
 
 def get_raw_data():
@@ -28,8 +41,8 @@ def run():
                 )
             except Exception as e:
                 print("Error with", kem_algorithm["identifier"], str(e))
-                return False
-    return True
+                print("Server Error, maybe Restarting")
+                time.sleep(5)
 
 
 def test():
@@ -54,5 +67,5 @@ def test():
 if __name__ == "__main__":
     start_scheduler()
     i = 0
-    while run() and i < 10_000:
-        i += 1
+    while True:
+        run()
