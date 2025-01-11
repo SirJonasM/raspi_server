@@ -28,7 +28,7 @@ rainbowVclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowV-classic.so")
 KEM_ALGORITHMS = {
     "mceliece348864": {
         "identifier": "mceliece348864",
-        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "encapsulation_algorithm": mceliece348864_lib.PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 128,
         "shared_secret_bytes": 32,
         "public_key_bytes": 261120,
@@ -36,7 +36,7 @@ KEM_ALGORITHMS = {
     },
     "mceliece460896": {
         "identifier": "mceliece460896",
-        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "encapsulation_algorithm": mceliece460896_lib.PQCLEAN_MCELIECE460896_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 188,
         "shared_secret_bytes": 32,
         "public_key_bytes": 524160,
@@ -44,7 +44,7 @@ KEM_ALGORITHMS = {
     },
     "mceliece6688128": {
         "identifier": "mceliece6688128",
-        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "encapsulation_algorithm": mceliece6688128_lib.PQCLEAN_MCELIECE6688128_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 240,
         "shared_secret_bytes": 32,
         "public_key_bytes": 1044992,
@@ -52,7 +52,7 @@ KEM_ALGORITHMS = {
     },
     "mceliece6960119": {
         "identifier": "mceliece6960119",
-        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "encapsulation_algorithm": mceliece6960119_lib.PQCLEAN_MCELIECE6960119_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 226,
         "shared_secret_bytes": 32,
         "public_key_bytes": 1047319,
@@ -60,7 +60,7 @@ KEM_ALGORITHMS = {
     },
     "mceliece8192128": {
         "identifier": "mceliece8192128",
-        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "encapsulation_algorithm": mceliece8192128_lib.PQCLEAN_MCELIECE8192128_CLEAN_crypto_kem_enc,
         "cipher_text_bytes": 240,
         "shared_secret_bytes": 32,
         "public_key_bytes": 1357824,

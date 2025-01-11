@@ -42,10 +42,13 @@ def generate_keypair(public_key_size, secret_key_size, algo, name):
 KEM_ALGORITHMS = {
     "mceliece348864": {
         "identifier": "mceliece348864",
-        "decapsulation_algorithm": mceliece348864_lib.decapsulate_key,
-        "keypair_algorithm": mceliece348864_lib.generate_keypair,
+        "decapsulation_algorithm": mceliece348864_lib.PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_dec,
+        "keypair_algorithm": mceliece348864_lib.PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_keypair,
         **generate_keypair(
-            6452, 261120, mceliece348864_lib.generate_keypair, "mceliece348864"
+            261120,
+            6452,
+            mceliece348864_lib.PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_keypair,
+            "mceliece348864",
         ),
         "cipher_text_bytes": 128,
         "shared_secret_bytes": 32,
@@ -54,10 +57,13 @@ KEM_ALGORITHMS = {
     },
     "mceliece460896": {
         "identifier": "mceliece460896",
-        "decapsulation_algorithm": mceliece460896_lib.decapsulate_key,
-        "keypair_algorithm": mceliece460896_lib.generate_keypair,
+        "decapsulation_algorithm": mceliece460896_lib.PQCLEAN_MCELIECE460896_CLEAN_crypto_kem_dec,
+        "keypair_algorithm": mceliece460896_lib.PQCLEAN_MCELIECE460896_CLEAN_crypto_kem_keypair,
         **generate_keypair(
-            13568, 524160, mceliece460896_lib.generate_keypair, "mceliece460896"
+            524160,
+            13568,
+            mceliece460896_lib.PQCLEAN_MCELIECE460896_CLEAN_crypto_kem_keypair,
+            "mceliece460896",
         ),
         "cipher_text_bytes": 188,
         "shared_secret_bytes": 32,
@@ -66,10 +72,13 @@ KEM_ALGORITHMS = {
     },
     "mceliece6688128": {
         "identifier": "mceliece6688128",
-        "decapsulation_algorithm": mceliece6688128_lib.decapsulate_key,
-        "keypair_algorithm": mceliece6688128_lib.generate_keypair,
+        "decapsulation_algorithm": mceliece6688128_lib.PQCLEAN_MCELIECE6688128_CLEAN_crypto_kem_dec,
+        "keypair_algorithm": mceliece6688128_lib.PQCLEAN_MCELIECE6688128_CLEAN_crypto_kem_keypair,
         **generate_keypair(
-            13892, 1044992, mceliece6688128_lib.generate_keypair, "mceliece6688128"
+            1044992,
+            13892,
+            mceliece6688128_lib.PQCLEAN_MCELIECE6688128_CLEAN_crypto_kem_keypair,
+            "mceliece6688128",
         ),
         "cipher_text_bytes": 240,
         "shared_secret_bytes": 32,
@@ -78,10 +87,13 @@ KEM_ALGORITHMS = {
     },
     "mceliece6960119": {
         "identifier": "mceliece6960119",
-        "decapsulation_algorithm": mceliece6960119_lib.decapsulate_key,
-        "keypair_algorithm": mceliece6960119_lib.generate_keypair,
+        "decapsulation_algorithm": mceliece6960119_lib.PQCLEAN_MCELIECE6960119_CLEAN_crypto_kem_dec,
+        "keypair_algorithm": mceliece6960119_lib.PQCLEAN_MCELIECE6960119_CLEAN_crypto_kem_keypair,
         **generate_keypair(
-            13908, 1047319, mceliece6960119_lib.generate_keypair, "mceliece6960119"
+            1047319,
+            13908,
+            mceliece6960119_lib.PQCLEAN_MCELIECE6960119_CLEAN_crypto_kem_keypair,
+            "mceliece6960119",
         ),
         "cipher_text_bytes": 226,
         "shared_secret_bytes": 32,
@@ -90,10 +102,13 @@ KEM_ALGORITHMS = {
     },
     "mceliece8192128": {
         "identifier": "mceliece8192128",
-        "decapsulation_algorithm": mceliece8192128_lib.decapsulate_key,
-        "keypair_algorithm": mceliece8192128_lib.generate_keypair,
+        "decapsulation_algorithm": mceliece8192128_lib.PQCLEAN_MCELIECE8192128_CLEAN_crypto_kem_dec,
+        "keypair_algorithm": mceliece8192128_lib.PQCLEAN_MCELIECE8192128_CLEAN_crypto_kem_keypair,
         **generate_keypair(
-            14080, 1357824, mceliece8192128_lib.generate_keypair, "mceliece8192128"
+            1357824,
+            14080,
+            mceliece8192128_lib.PQCLEAN_MCELIECE8192128_CLEAN_crypto_kem_keypair,
+            "mceliece8192128",
         ),
         "cipher_text_bytes": 240,
         "shared_secret_bytes": 32,

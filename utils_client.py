@@ -5,7 +5,7 @@ import hashlib
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 
-ENDPOINT = "http://192.168.178.98:5000"
+ENDPOINT = "http://127.0.0.1:5000"
 
 
 def hash_message(message, timings):
