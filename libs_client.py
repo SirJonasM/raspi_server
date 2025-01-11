@@ -10,6 +10,12 @@ hqcrmrs128_lib = ctypes.CDLL("./build/crypto_kem/libhqc-rmrs-128.so")
 hqcrmrs192_lib = ctypes.CDLL("./build/crypto_kem/libhqc-rmrs-192.so")
 hqcrmrs256_lib = ctypes.CDLL("./build/crypto_kem/libhqc-rmrs-256.so")
 
+mceliece348864_lib = ctypes.CDLL("./build/crypto_kem/libmceliece348864.so")
+mceliece460896_lib = ctypes.CDLL("./build/crypto_kem/libmceliece460896.so")
+mceliece6688128_lib = ctypes.CDLL("./build/crypto_kem/libmceliece6688128.so")
+mceliece6960119_lib = ctypes.CDLL("./build/crypto_kem/libmceliece6960119.so")
+mceliece8192128_lib = ctypes.CDLL("./build/crypto_kem/libmceliece8192128.so")
+
 dilithium2_lib = ctypes.CDLL("./build/crypto_sign/libdilithium2.so")
 dilithium3_lib = ctypes.CDLL("./build/crypto_sign/libdilithium3.so")
 dilithium5_lib = ctypes.CDLL("./build/crypto_sign/libdilithium5.so")
@@ -20,6 +26,46 @@ rainbowIIIclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowIII-classic.s
 rainbowVclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowV-classic.so")
 
 KEM_ALGORITHMS = {
+    "mceliece348864": {
+        "identifier": "mceliece348864",
+        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "cipher_text_bytes": 128,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 261120,
+        "private_key_bytes": 6452,
+    },
+    "mceliece460896": {
+        "identifier": "mceliece460896",
+        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "cipher_text_bytes": 188,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 524160,
+        "private_key_bytes": 13568,
+    },
+    "mceliece6688128": {
+        "identifier": "mceliece6688128",
+        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "cipher_text_bytes": 240,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 1044992,
+        "private_key_bytes": 13892,
+    },
+    "mceliece6960119": {
+        "identifier": "mceliece6960119",
+        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "cipher_text_bytes": 226,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 1047319,
+        "private_key_bytes": 13908,
+    },
+    "mceliece8192128": {
+        "identifier": "mceliece8192128",
+        "encapsulation_algorithm": mceliece348864_lib.encapsulate_key,
+        "cipher_text_bytes": 240,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 1357824,
+        "private_key_bytes": 14080,
+    },
     "kyber512rust": {
         "identifier": "kyber512rust",
         "encapsulation_algorithm": kyber512rust_lib.encapsulate_key,

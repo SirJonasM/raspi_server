@@ -10,6 +10,12 @@ hqcrmrs128_lib = ctypes.CDLL("./build/crypto_kem/libhqc-rmrs-128.so")
 hqcrmrs192_lib = ctypes.CDLL("./build/crypto_kem/libhqc-rmrs-192.so")
 hqcrmrs256_lib = ctypes.CDLL("./build/crypto_kem/libhqc-rmrs-256.so")
 
+mceliece348864_lib = ctypes.CDLL("./build/crypto_kem/libmceliece348864.so")
+mceliece460896_lib = ctypes.CDLL("./build/crypto_kem/libmceliece460896.so")
+mceliece6688128_lib = ctypes.CDLL("./build/crypto_kem/libmceliece6688128.so")
+mceliece6960119_lib = ctypes.CDLL("./build/crypto_kem/libmceliece6960119.so")
+mceliece8192128_lib = ctypes.CDLL("./build/crypto_kem/libmceliece8192128.so")
+
 dilithium2_lib = ctypes.CDLL("./build/crypto_sign/libdilithium2.so")
 dilithium3_lib = ctypes.CDLL("./build/crypto_sign/libdilithium3.so")
 dilithium5_lib = ctypes.CDLL("./build/crypto_sign/libdilithium5.so")
@@ -34,6 +40,66 @@ def generate_keypair(public_key_size, secret_key_size, algo, name):
 
 
 KEM_ALGORITHMS = {
+    "mceliece348864": {
+        "identifier": "mceliece348864",
+        "decapsulation_algorithm": mceliece348864_lib.decapsulate_key,
+        "keypair_algorithm": mceliece348864_lib.generate_keypair,
+        **generate_keypair(
+            6452, 261120, mceliece348864_lib.generate_keypair, "mceliece348864"
+        ),
+        "cipher_text_bytes": 128,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 261120,
+        "private_key_bytes": 6452,
+    },
+    "mceliece460896": {
+        "identifier": "mceliece460896",
+        "decapsulation_algorithm": mceliece460896_lib.decapsulate_key,
+        "keypair_algorithm": mceliece460896_lib.generate_keypair,
+        **generate_keypair(
+            13568, 524160, mceliece460896_lib.generate_keypair, "mceliece460896"
+        ),
+        "cipher_text_bytes": 188,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 524160,
+        "private_key_bytes": 13568,
+    },
+    "mceliece6688128": {
+        "identifier": "mceliece6688128",
+        "decapsulation_algorithm": mceliece6688128_lib.decapsulate_key,
+        "keypair_algorithm": mceliece6688128_lib.generate_keypair,
+        **generate_keypair(
+            13892, 1044992, mceliece6688128_lib.generate_keypair, "mceliece6688128"
+        ),
+        "cipher_text_bytes": 240,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 1044992,
+        "private_key_bytes": 13892,
+    },
+    "mceliece6960119": {
+        "identifier": "mceliece6960119",
+        "decapsulation_algorithm": mceliece6960119_lib.decapsulate_key,
+        "keypair_algorithm": mceliece6960119_lib.generate_keypair,
+        **generate_keypair(
+            13908, 1047319, mceliece6960119_lib.generate_keypair, "mceliece6960119"
+        ),
+        "cipher_text_bytes": 226,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 1047319,
+        "private_key_bytes": 13908,
+    },
+    "mceliece8192128": {
+        "identifier": "mceliece8192128",
+        "decapsulation_algorithm": mceliece8192128_lib.decapsulate_key,
+        "keypair_algorithm": mceliece8192128_lib.generate_keypair,
+        **generate_keypair(
+            14080, 1357824, mceliece8192128_lib.generate_keypair, "mceliece8192128"
+        ),
+        "cipher_text_bytes": 240,
+        "shared_secret_bytes": 32,
+        "public_key_bytes": 1357824,
+        "private_key_bytes": 14080,
+    },
     "kyber512rust": {
         "identifier": "kyber512rust",
         "decapsulation_algorithm": kyber512rust_lib.decapsulate_key,
@@ -53,7 +119,7 @@ KEM_ALGORITHMS = {
         **generate_keypair(
             1184, 2400, kyber768rust_lib.generate_keypair, "kyber768rust"
         ),
-        "kem_cipher_text_bytes": 1088,
+        "cipher_text_bytes": 1088,
         "shared_secret_bytes": 32,
         "public_key_bytes": 2400,
         "private_key_bytes": 1184,
