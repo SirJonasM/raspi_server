@@ -4,6 +4,7 @@ from scheduler import start_scheduler
 import json
 import csv
 import time
+import sys
 
 
 def write_csv_header():
@@ -22,7 +23,7 @@ def get_raw_data():
         return json.dumps(json.load(f)).encode("utf-8")
 
 
-def run():
+def run(url):
     raw_data = get_raw_data()
     for kem_algorithm in KEM_ALGORITHMS.values():
         for sign_algorithm in SIGNATURE_ALGORITHMS.values():
@@ -38,6 +39,7 @@ def run():
                     sign_algorithm["public_key"],
                     sign_algorithm["private_key"],
                     sign_algorithm["signature_bytes"],
+                    url,
                 )
             except Exception as e:
                 print("Error with", kem_algorithm["identifier"], str(e))
@@ -45,27 +47,22 @@ def run():
                 time.sleep(5)
 
 
-def test():
-    raw_data = "This is just some simple Text to test with."
-    kem_algorithm = KEM_ALGORITHMS["kyber768"]
-    sign_algorithm = SIGNATURE_ALGORITHMS["dilithium2"]
-    return_message = send_data(
-        raw_data,
-        kem_algorithm["name"],
-        kem_algorithm["encapsulation_algorithm"],
-        kem_algorithm["cipher_text_bytes"],
-        kem_algorithm["shared_secret_bytes"],
-        sign_algorithm["name"],
-        sign_algorithm["signature_algorithm"],
-        sign_algorithm["public_key"],
-        sign_algorithm["private_key"],
-        sign_algorithm["signature_bytes"],
-    )
-    return raw_data == return_message
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python client.py <SERVER_IP> [PORT=5000]")
+        return
+
+    server_ip = sys.argv[1]
+    port = 5000  # default
+    if len(sys.argv) >= 3:
+        port = int(sys.argv[2])
+
+    url = f"http://{server_ip}:{port}/"
+
+    start_scheduler()
+    while True:
+        run(url)
 
 
 if __name__ == "__main__":
-    start_scheduler()
-    i = 0
-    while True:
-        run()
+    main()
