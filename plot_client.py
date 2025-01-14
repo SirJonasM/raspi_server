@@ -53,35 +53,39 @@ def plot_metric(data, metric, xlabel, ylabel, title, output_filename):
     })
     print(mean_std_df)
 
-# Loop through each device and generate plots
-for device in client_timings_df['Client Device'].unique():
-    device_data = client_timings_df[client_timings_df['Client Device'] == device]
-    device_output_folder = os.path.join(output_folder, device.replace(" ", "_"))
-    os.makedirs(device_output_folder, exist_ok=True)
+def main():
+    # Loop through each device and generate plots
+    for device in client_timings_df['Client Device'].unique():
+        device_data = client_timings_df[client_timings_df['Client Device'] == device]
+        device_output_folder = os.path.join(output_folder, device.replace(" ", "_"))
+        os.makedirs(device_output_folder, exist_ok=True)
 
-    # Calculate average encapsulation, encryption, and hash times by KEM Algorithm
-    kem_averages = device_data.groupby('KEM Algorithm')[['Encapsulation Time', 'Encryption Time', 'Client Hash Time']].mean()
+        # Calculate average encapsulation, encryption, and hash times by KEM Algorithm
+        kem_averages = device_data.groupby('KEM Algorithm')[['Encapsulation Time', 'Encryption Time', 'Client Hash Time']].mean()
 
-    # Calculate average sign times by Signature Algorithm
-    signature_averages = device_data.groupby('Signature Algorithm')['Sign Time'].mean()
+        # Calculate average sign times by Signature Algorithm
+        signature_averages = device_data.groupby('Signature Algorithm')['Sign Time'].mean()
 
-    # Plot Encapsulation Time, Encryption Time, and Client Hash Time by KEM Algorithm
-    for metric in ['Encapsulation Time', 'Encryption Time', 'Client Hash Time']:
+        # Plot Encapsulation Time, Encryption Time, and Client Hash Time by KEM Algorithm
+        for metric in ['Encapsulation Time', 'Encryption Time', 'Client Hash Time']:
+            plot_metric(
+                kem_averages[metric],
+                metric,
+                xlabel='KEM Algorithm',
+                ylabel=f'{metric} (microseconds)',
+                title=f'Average {metric} by KEM Algorithm - {device}',
+                output_filename=os.path.join(device_output_folder, f'{metric.lower().replace(" ", "_")}_kem.png'),
+            )
+
+        # Plot Sign Time by Signature Algorithm
         plot_metric(
-            kem_averages[metric],
-            metric,
-            xlabel='KEM Algorithm',
-            ylabel=f'{metric} (microseconds)',
-            title=f'Average {metric} by KEM Algorithm - {device}',
-            output_filename=os.path.join(device_output_folder, f'{metric.lower().replace(" ", "_")}_kem.png'),
+            signature_averages,
+            'Sign Time',
+            xlabel='Signature Algorithm',
+            ylabel='Sign Time (microseconds)',
+            title=f'Average Sign Time by Signature Algorithm - {device}',
+            output_filename=os.path.join(device_output_folder, 'sign_time_signature.png'),
         )
 
-    # Plot Sign Time by Signature Algorithm
-    plot_metric(
-        signature_averages,
-        'Sign Time',
-        xlabel='Signature Algorithm',
-        ylabel='Sign Time (microseconds)',
-        title=f'Average Sign Time by Signature Algorithm - {device}',
-        output_filename=os.path.join(device_output_folder, 'sign_time_signature.png'),
-    )
+if name == "__main__":
+    main()

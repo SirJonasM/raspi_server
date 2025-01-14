@@ -43,71 +43,77 @@ def plot_metric(data, errors, xlabel, ylabel, title, output_filename, max_error_
     plt.close()
     print(f"Saved plot: {output_filename}")
 
-# Loop through each device and generate plots
-for device in server_timings_df['Server Device'].unique():
-    device_data = server_timings_df[server_timings_df['Server Device'] == device]
-    device_output_folder = os.path.join(output_folder, device.replace(" ", "_"))
-    os.makedirs(device_output_folder, exist_ok=True)
 
-    # Calculate averages and standard deviations for metrics by KEM Algorithm
-    kem_stats = device_data.groupby('KEM Algorithm')[numeric_columns].agg(['mean', 'std'])
+def main():
+    # Loop through each device and generate plots
+    for device in server_timings_df['Server Device'].unique():
+        device_data = server_timings_df[server_timings_df['Server Device'] == device]
+        device_output_folder = os.path.join(output_folder, device.replace(" ", "_"))
+        os.makedirs(device_output_folder, exist_ok=True)
 
-    # Calculate Verify Time statistics by Signature Algorithm
-    signature_stats = device_data.groupby('Signature Algorithm')['Verify Time'].agg(['mean', 'std'])
+        # Calculate averages and standard deviations for metrics by KEM Algorithm
+        kem_stats = device_data.groupby('KEM Algorithm')[numeric_columns].agg(['mean', 'std'])
 
-    # Separate Rainbow Classic algorithms for Verify Time
-    rainbow_classic_algorithms = signature_stats[signature_stats.index.str.contains('rainbow')]
-    non_rainbow_algorithms = signature_stats[~signature_stats.index.str.contains('rainbow')]
+        # Calculate Verify Time statistics by Signature Algorithm
+        signature_stats = device_data.groupby('Signature Algorithm')['Verify Time'].agg(['mean', 'std'])
 
-    # Separate Kyber algorithms for Decapsulation Time
-    kyber_algorithms = kem_stats[kem_stats.index.str.contains('kyber')]
-    non_kyber_algorithms = kem_stats[~kem_stats.index.str.contains('kyber')]
+        # Separate Rainbow Classic algorithms for Verify Time
+        rainbow_classic_algorithms = signature_stats[signature_stats.index.str.contains('rainbow')]
+        non_rainbow_algorithms = signature_stats[~signature_stats.index.str.contains('rainbow')]
 
-    # Plot Decapsulation Time with Kyber and Non-Kyber separated
-    plot_metric(
-        non_kyber_algorithms[('Decapsulation Time', 'mean')],
-        errors=non_kyber_algorithms[('Decapsulation Time', 'std')],
-        xlabel='KEM Algorithm',
-        ylabel='Decapsulation Time (microseconds)',
-        title=f'Average Decapsulation Time by KEM Algorithm (Non-Kyber) - {device}',
-        output_filename=os.path.join(device_output_folder, 'avg_decapsulation_time_by_kem_non_kyber.png'),
-    )
+        # Separate Kyber algorithms for Decapsulation Time
+        kyber_algorithms = kem_stats[kem_stats.index.str.contains('kyber')]
+        non_kyber_algorithms = kem_stats[~kem_stats.index.str.contains('kyber')]
 
-    plot_metric(
-        kyber_algorithms[('Decapsulation Time', 'mean')],
-        errors=kyber_algorithms[('Decapsulation Time', 'std')],
-        xlabel='KEM Algorithm',
-        ylabel='Decapsulation Time (microseconds)',
-        title=f'Average Decapsulation Time by KEM Algorithm (Kyber) - {device}',
-        output_filename=os.path.join(device_output_folder, 'avg_decapsulation_time_by_kem_kyber.png'),
-    )
-
-    # Plot Verify Time with Rainbow and Non-Rainbow separated
-    plot_metric(
-        non_rainbow_algorithms['mean'],
-        errors=non_rainbow_algorithms['std'],
-        xlabel='Signature Algorithm',
-        ylabel='Verify Time (microseconds)',
-        title=f'Average Verify Time by Non-Rainbow Signature Algorithms - {device}',
-        output_filename=os.path.join(device_output_folder, 'avg_verify_time_by_non_rainbow_signature.png'),
-    )
-
-    plot_metric(
-        rainbow_classic_algorithms['mean'],
-        errors=rainbow_classic_algorithms['std'],
-        xlabel='Signature Algorithm',
-        ylabel='Verify Time (microseconds)',
-        title=f'Average Verify Time by Rainbow Signature Algorithms - {device}',
-        output_filename=os.path.join(device_output_folder, 'avg_verify_time_by_rainbow_signature.png'),
-    )
-
-    # Plot other metrics (Server Hash Time and Decrypt Time) by KEM Algorithm
-    for metric in ['Server Hash Time', 'Decrypt Time']:
+        # Plot Decapsulation Time with Kyber and Non-Kyber separated
         plot_metric(
-            kem_stats[(metric, 'mean')],
-            errors=kem_stats[(metric, 'std')],
+            non_kyber_algorithms[('Decapsulation Time', 'mean')],
+            errors=non_kyber_algorithms[('Decapsulation Time', 'std')],
             xlabel='KEM Algorithm',
-            ylabel=f'{metric} (microseconds)',
-            title=f'Average {metric} by KEM Algorithm - {device}',
-            output_filename=os.path.join(device_output_folder, f'avg_{metric.lower().replace(" ", "_")}_by_kem.png'),
+            ylabel='Decapsulation Time (microseconds)',
+            title=f'Average Decapsulation Time by KEM Algorithm (Non-Kyber) - {device}',
+            output_filename=os.path.join(device_output_folder, 'avg_decapsulation_time_by_kem_non_kyber.png'),
         )
+
+        plot_metric(
+            kyber_algorithms[('Decapsulation Time', 'mean')],
+            errors=kyber_algorithms[('Decapsulation Time', 'std')],
+            xlabel='KEM Algorithm',
+            ylabel='Decapsulation Time (microseconds)',
+            title=f'Average Decapsulation Time by KEM Algorithm (Kyber) - {device}',
+            output_filename=os.path.join(device_output_folder, 'avg_decapsulation_time_by_kem_kyber.png'),
+        )
+
+        # Plot Verify Time with Rainbow and Non-Rainbow separated
+        plot_metric(
+            non_rainbow_algorithms['mean'],
+            errors=non_rainbow_algorithms['std'],
+            xlabel='Signature Algorithm',
+            ylabel='Verify Time (microseconds)',
+            title=f'Average Verify Time by Non-Rainbow Signature Algorithms - {device}',
+            output_filename=os.path.join(device_output_folder, 'avg_verify_time_by_non_rainbow_signature.png'),
+        )
+
+        plot_metric(
+            rainbow_classic_algorithms['mean'],
+            errors=rainbow_classic_algorithms['std'],
+            xlabel='Signature Algorithm',
+            ylabel='Verify Time (microseconds)',
+            title=f'Average Verify Time by Rainbow Signature Algorithms - {device}',
+            output_filename=os.path.join(device_output_folder, 'avg_verify_time_by_rainbow_signature.png'),
+        )
+
+        # Plot other metrics (Server Hash Time and Decrypt Time) by KEM Algorithm
+        for metric in ['Server Hash Time', 'Decrypt Time']:
+            plot_metric(
+                kem_stats[(metric, 'mean')],
+                errors=kem_stats[(metric, 'std')],
+                xlabel='KEM Algorithm',
+                ylabel=f'{metric} (microseconds)',
+                title=f'Average {metric} by KEM Algorithm - {device}',
+                output_filename=os.path.join(device_output_folder, f'avg_{metric.lower().replace(" ", "_")}_by_kem.png'),
+            )
+
+
+if name == "__main__":
+    main()
