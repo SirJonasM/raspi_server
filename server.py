@@ -1,19 +1,9 @@
 from flask import Flask, jsonify, request
 from utils_server import get_kem_key, handle_client_message
 import csv
+import os
 
 app = Flask(__name__)
-
-
-def write_csv_header():
-    """Writes the header to the CSV file if it doesn't already exist."""
-    try:
-        with open("key_generation_times_server.csv", "x", newline="") as csvfile:
-            writer = csv.writer(csvfile, delimiter=";")
-            writer.writerow(["Name", "Time"])
-    except FileExistsError:
-        # File already exists, no need to write the header
-        pass
 
 
 @app.route("/", methods=["POST"])
@@ -34,31 +24,33 @@ def get_key():
     return get_kem_key(kem_name)
 
 
-def write_csv_header(output_file="timings.csv"):
-    """
-    Writes the header to the CSV file.
+def check_and_write_csv(file_name, header):
+    if not os.path.exists(file_name):
+        with open(file_name, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(header)
 
-    Parameters:
-        output_file (str): Path to the output CSV file.
-    """
-    # Define the header
-    header = [
-        "KEM Algorithm",
-        "Signature Algorithm",
-        "Encapsulation Time",
-        "Encryption Time",
-        "Client Hash Time",
-        "Sign Time",
-        "Server Hash Time",
-        "Verify Time",
-        "Decapsulation Time",
-        "Decrypt Time",
-    ]
 
-    # Open the CSV file in write mode and write the header
-    with open(output_file, mode="w", newline="") as csvfile:
+def file_setup():
+    check_and_write_csv(
+        "key_generation_times.csv", ["name", "Key Generation Time", "Device Name"]
+    )
+    check_and_write_csv(
+        "timings_client.csv",
+        [
+            "KEM Algorithm",
+            "Signature Algorithm",
+            "Server Hash Time",
+            "Verify Time",
+            "Decapsulation Time",
+            "Decrypt Time",
+            "Device Name",
+            "Encrypted Data Size",
+        ],
+    )
+    with open("key_sizes_server.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(header)
+        writer.writerow(["name", "public_key_size", "secret_key_size"])
 
 
 if __name__ == "__main__":

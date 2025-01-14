@@ -81,12 +81,8 @@ def decapsulate_aes_key(secret_key_encrypted, kem_algo_name, timings):
     return ss_buffer.raw
 
 
-def match_data_with_raw_data(data):
-    pass
-
-
 def write_timings_to_file(
-    timings, kem_algo_name, sign_algorithm_name, output_file="timings.csv"
+    timings, kem_algo_name, sign_algorithm_name, output_file="timings_server.csv"
 ):
     # Prepare the data row with algorithm names and timings
     data_row = [kem_algo_name, sign_algorithm_name] + list(timings.values())

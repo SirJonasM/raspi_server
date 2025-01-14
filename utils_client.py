@@ -75,14 +75,14 @@ def get_data_to_send(
     signature = sign_message(
         hashed_ciphertext, sign_algorithm, sign_private_key, sign_bytes, timings
     )
+
     return {
         "cipher_text": ciphertext.hex(),
         "iv": iv.hex(),
         "signature": signature.hex(),
         "secret_key": encapsulated_key.hex(),
         "sign_pub_key": sign_public_key.hex(),
-        "timings": timings,
-    }
+    }, timings
 
 
 def send_data(
@@ -99,7 +99,7 @@ def send_data(
     url,
 ):
     client_public_key = get_client_public_key(kem_algo_name, url)
-    payload = get_data_to_send(
+    payload, timings = get_data_to_send(
         raw_data,
         client_public_key,
         kem_algorithm,
@@ -117,7 +117,7 @@ def send_data(
     data = response.json()
     if not data or "message" not in data:
         raise ValueError("Missing 'server_public_key' in response")
-    return data["message"]
+    return data["message"], timings
 
 
 def sign_message(message, sign_algorithm, private_key, signature_bytes, timings):
