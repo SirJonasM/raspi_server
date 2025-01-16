@@ -1,6 +1,7 @@
-# controller.py
 import time
 import paramiko
+import pandas as pd
+import os
 
 # -----------------------------------------
 # ADJUST THESE TO MATCH YOUR ENVIRONMENT
@@ -22,8 +23,7 @@ PI_B = {
 SERVER_SCRIPT = "/home/jonas/git-repos/raspi_server/server.py"
 CLIENT_SCRIPT = "/home/jonas/git-repos/raspi_server/client.py"
 
-# How long to let each role run before swapping (in seconds)
-RUN_DURATION = 180  # 1 minute for example; adjust as needed
+RUN_DURATION = 180
 ITERATIONS = 2
 
 
@@ -128,6 +128,24 @@ def download_file(pi_info, remote_path, local_path):
         ssh.close()
 
 
+def combine_csv(file1, file2, output_file):
+    df1 = pd.read_csv(file1)
+    df2 = pd.read_csv(file2)
+
+    if list(df1.columns) != list(df2.columns):
+        print(f"Headers do not match for {file1} and {file2}")
+        return
+
+    combined_df = pd.concat([df1, df2], ignore_index=True)
+
+    combined_df.to_csv(output_file, index=False)
+    print(f"Combined {file1} and {file2} into {output_file}")
+
+    os.remove(file1)
+    os.remove(file2)
+    print(f"Deleted {file1} and {file2}")
+
+
 def main():
     for i in range(ITERATIONS):
         # ----------------------
@@ -136,10 +154,8 @@ def main():
         # ----------------------
         print("[INFO] Starting Pi A as server, Pi B as client")
 
-        # 2.1) Start server on Pi B
         pid_server_b = start_server(PI_B)
 
-        # 2.2) Start client on Pi A (target = Pi B's IP)
         pid_client_a = start_client(PI_A, PI_B["url"])
 
         # 2.3) Let them run for RUN_DURATION
@@ -170,18 +186,35 @@ def main():
         stop_process(PI_A, pid_server_a)
         stop_process(PI_B, pid_client_b)
 
-        # Then the loop repeats, going back to step 1.
     download_file(
-        PI_A, "/home/jonas/git-repos/raspi_server/client_timings.csv", "./client_timings_pi3.csv"
+        PI_A,
+        "/home/jonas/git-repos/raspi_server/client_timings.csv",
+        "./client_timings_pi3.csv",
     )
     download_file(
-        PI_A, "/home/jonas/git-repos/raspi_server/server_timings.csv", "./server_timings_pi3.csv"
+        PI_B,
+        "/home/jonas/git-repos/raspi_server/client_timings.csv",
+        "./client_timings_pi2W.csv",
+    )
+    combine_csv(
+        "client_timings_pi3.csv",
+        "client_timings_pi2W.csv",
+        "combined_client_timings.csv",
     )
     download_file(
-        PI_B, "/home/jonas/git-repos/raspi_server/client_timings.csv", "./client_timings_pi2W.csv"
+        PI_B,
+        "/home/jonas/git-repos/raspi_server/server_timings.csv",
+        "./server_timings_pi2W.csv",
     )
     download_file(
-        PI_B, "/home/jonas/git-repos/raspi_server/server_timings.csv", "./server_timings_pi2W.csv"
+        PI_A,
+        "/home/jonas/git-repos/raspi_server/server_timings.csv",
+        "./server_timings_pi3.csv",
+    )
+    combine_csv(
+        "server_timings_pi3.csv",
+        "server_timings_pi2W.csv",
+        "combined_server_timings.csv",
     )
     download_file(
         PI_A,
@@ -192,6 +225,11 @@ def main():
         PI_B,
         "/home/jonas/git-repos/raspi_server/key_generation_times.csv",
         "./key_generation_times_pi2W.csv",
+    )
+    combine_csv(
+        "key_generation_times_pi3.csv",
+        "key_generation_times_pi2W.csv",
+        "combined_key_generation_times.csv",
     )
 
 
