@@ -36,7 +36,7 @@ def file_setup():
         "key_generation_times.csv", ["name", "Key Generation Time", "Device Name"]
     )
     check_and_write_csv(
-        "timings_client.csv",
+        "server_timings.csv",
         [
             "KEM Algorithm",
             "Signature Algorithm",
