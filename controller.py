@@ -172,10 +172,16 @@ def main():
 
         # Then the loop repeats, going back to step 1.
     download_file(
-        PI_A, "/home/jonas/git-repos/raspi_server/timings.csv", "./timings_pi3.csv"
+        PI_A, "/home/jonas/git-repos/raspi_server/client_timings.csv", "./client_timings_pi3.csv"
     )
     download_file(
-        PI_B, "/home/jonas/git-repos/raspi_server/timings.csv", "./timings_pi2W.csv"
+        PI_A, "/home/jonas/git-repos/raspi_server/server_timings.csv", "./server_timings_pi3.csv"
+    )
+    download_file(
+        PI_B, "/home/jonas/git-repos/raspi_server/client_timings.csv", "./client_timings_pi2W.csv"
+    )
+    download_file(
+        PI_B, "/home/jonas/git-repos/raspi_server/server_timings.csv", "./server_timings_pi2W.csv"
     )
     download_file(
         PI_A,
