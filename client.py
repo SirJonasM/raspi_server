@@ -74,7 +74,7 @@ def run(url):
     for kem_algorithm in KEM_ALGORITHMS.values():
         for sign_algorithm in SIGNATURE_ALGORITHMS.values():
             try:
-                _message, timings = send_data(
+                message, timings = send_data(
                     RAW_DATA,
                     kem_algorithm["identifier"],
                     kem_algorithm["encapsulation_algorithm"],

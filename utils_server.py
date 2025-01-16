@@ -99,10 +99,10 @@ def handle_client_message(
     signature,
     secret_key,
     sign_pub_key,
-    timings,
     kem_algo_name,
     sign_algorithm_name,
 ):
+    timings = {}
     signature_bytes = bytes.fromhex(signature)
     sign_pub_key_bytes = bytes.fromhex(sign_pub_key)
     cipher_text_bytes = bytes.fromhex(cipher_text)
