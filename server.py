@@ -10,9 +10,13 @@ app = Flask(__name__)
 def home():
     data = request.json
     if data is None:
-        return jsonify({"message": "Error"})
-    response, status = handle_client_message(**data)
-    return jsonify(response), status
+        return jsonify({"message": "Error"}), 500
+    try:
+        response, status = handle_client_message(**data)
+        return jsonify(response), status
+    except:
+        print("Error")
+        return jsonify({"message": "Error"}), 500
 
 
 @app.route("/keys", methods=["POST"])
@@ -48,9 +52,6 @@ def file_setup():
             "Encrypted Data Size",
         ],
     )
-    with open("key_sizes_server.csv", "w", newline="") as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["name", "public_key_size", "secret_key_size"])
 
 
 if __name__ == "__main__":
