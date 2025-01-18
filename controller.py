@@ -24,7 +24,7 @@ SERVER_SCRIPT = "/home/jonas/git-repos/raspi_server/server.py"
 CLIENT_SCRIPT = "/home/jonas/git-repos/raspi_server/client.py"
 
 RUN_DURATION = 300
-ITERATIONS = 0
+ITERATIONS = 1 
 
 
 def ssh_command(pi_info, command):
