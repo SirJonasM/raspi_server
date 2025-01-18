@@ -89,7 +89,7 @@ def run(url):
                     sign_algorithm["signature_bytes"],
                     url,
                 )
-                write_timings(timings, kem_algorithm, sign_algorithm)
+                write_timings(timings, kem_algorithm["identifier"], sign_algorithm["identifier"])
             except Exception as e:
                 print("Error with", kem_algorithm["identifier"], str(e))
                 print("Server Error, maybe Restarting")
