@@ -17,7 +17,7 @@ def fetch():
         response.raise_for_status()
         # Ensure UTF-8 decoding
         text_data = response.text
-        return text_data
+        return text_data.encode("utf-8")
 
     except Exception as e:
         print(f"Error fetching data: {e}")
@@ -65,7 +65,9 @@ def write_timings(timings, kem_algorithm, sign_algorithm):
                 CLIENT_DEVICE,
                 timings["encapsulation_time"],
                 timings["encryption_time"],
-                timings["client_hash_time", "sign_time", RAW_DATA],
+                timings["client_hash_time"], 
+                timings["sign_time"], 
+                len(RAW_DATA),
             ]
         )
 

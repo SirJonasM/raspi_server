@@ -15,7 +15,7 @@ def hash_message(message, timings):
     return hash_obj.digest()
 
 
-def read_and_encrypt_file(aes_key, raw_data, timings):
+def encrypt_data(aes_key, raw_data, timings):
     start_time = time.time_ns()
     cipher = AES.new(aes_key, AES.MODE_CBC)
     ciphertext = cipher.encrypt(pad(raw_data, AES.block_size))
@@ -36,7 +36,7 @@ def encapsulate_key(
     result = encapsulate_algorithm(encapsulated_key, shared_secret, client_public_key)
     if result != 0:
         raise ValueError("Encapsulation failed")
-    timings["encapsulate_key"] = time.time_ns() - start_time
+    timings["encapsulation_time"] = time.time_ns() - start_time
 
     return encapsulated_key.raw, shared_secret.raw
 
@@ -69,7 +69,8 @@ def get_data_to_send(
         shared_secret_bytes,
         timings,
     )
-    ciphertext, iv = read_and_encrypt_file(shared_secret[:32], raw_data, timings)
+    ciphertext, iv = encrypt_data(shared_secret[:32], raw_data, timings)
+
     hashed_ciphertext = hash_message(ciphertext, timings)
 
     signature = sign_message(
@@ -110,7 +111,6 @@ def send_data(
         sign_private_key,
         sign_bytes,
     )
-
     payload["kem_algo_name"] = kem_algo_name
     payload["sign_algorithm_name"] = sign_algorithm_name
     response = requests.post(f"{url}", json=payload)
