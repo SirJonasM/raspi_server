@@ -23,8 +23,8 @@ PI_B = {
 SERVER_SCRIPT = "/home/jonas/git-repos/raspi_server/server.py"
 CLIENT_SCRIPT = "/home/jonas/git-repos/raspi_server/client.py"
 
-RUN_DURATION = 180
-ITERATIONS = 2
+RUN_DURATION = 300
+ITERATIONS = 0
 
 
 def ssh_command(pi_info, command):
@@ -110,8 +110,7 @@ def download_file(pi_info, remote_path, local_path):
     ssh.connect(
         hostname=pi_info["hostname"],
         username=pi_info["username"],
-        key_filename=pi_info.get("key_filename"),
-        password=pi_info.get("password", None),
+        key_filename=pi_info["key_filename"],
     )
     try:
         sftp = ssh.open_sftp()
@@ -131,14 +130,12 @@ def download_file(pi_info, remote_path, local_path):
 def combine_csv(file1, file2, output_file):
     df1 = pd.read_csv(file1)
     df2 = pd.read_csv(file2)
-
-    if list(df1.columns) != list(df2.columns):
-        print(f"Headers do not match for {file1} and {file2}")
-        return
-
+    print(df1)
+    print(df2)
     combined_df = pd.concat([df1, df2], ignore_index=True)
 
-    combined_df.to_csv(output_file, index=False)
+    # Write the combined dataframe to the output file without adding a header
+    combined_df.to_csv(output_file, index=False, header=False)
     print(f"Combined {file1} and {file2} into {output_file}")
 
     os.remove(file1)

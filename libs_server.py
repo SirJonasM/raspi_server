@@ -39,7 +39,7 @@ def generate_keypair(public_key_size, secret_key_size, algo, name):
         raise ValueError("Key generation failed")
     elapsed_time = time.time() - t
     with open("key_generation_times.csv", "a", newline="") as csvfile:
-        writer = csv.writer(csvfile, delimiter=";")
+        writer = csv.writer(csvfile)
         writer.writerow([name, elapsed_time])
     return {"public_key": pk.raw, "private_key": sk.raw}
 
