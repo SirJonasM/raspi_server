@@ -6,6 +6,9 @@ from Crypto.Util.Padding import unpad
 from flask import jsonify
 from libs_server import SIGNATURE_ALGORITHMS, KEM_ALGORITHMS
 import csv
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def hash_message(message, timings):
