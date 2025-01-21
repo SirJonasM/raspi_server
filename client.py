@@ -5,6 +5,9 @@ import time
 import sys
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 url = "https://ogcapi.hft-stuttgart.de/sta/udigit4icity/v1.1/Observations"
 

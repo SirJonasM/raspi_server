@@ -84,7 +84,7 @@ def decapsulate_aes_key(secret_key_encrypted, kem_algo_name, timings):
 def write_timings_to_file(
     timings, kem_algo_name, sign_algorithm_name, output_file="server_timings.csv"
 ):
-    client_device = os.getenv()["DEVICE_NAME"] 
+    client_device = os.getenv("DEVICE_NAME")
     # Prepare the data row with algorithm names and timings
     data_row = [kem_algo_name, sign_algorithm_name, client_device] + list(timings.values())
 

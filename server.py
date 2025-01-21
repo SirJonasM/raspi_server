@@ -2,6 +2,11 @@ from flask import Flask, jsonify, request
 from utils_server import get_kem_key, handle_client_message
 import csv
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 
 app = Flask(__name__)
 
