@@ -8,7 +8,6 @@ import os
 
 url = "https://ogcapi.hft-stuttgart.de/sta/udigit4icity/v1.1/Observations"
 
-CLIENT_DEVICE = os.getenv("DEVICE_NAME")
 
 
 def fetch():
@@ -56,13 +55,14 @@ def file_setup():
 
 
 def write_timings(timings, kem_algorithm, sign_algorithm):
+    client_device = os.getenv("DEVICE_NAME")
     with open("client_timings.csv", "a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(
             [
                 kem_algorithm,
                 sign_algorithm,
-                CLIENT_DEVICE,
+                client_device,
                 timings["encapsulation_time"],
                 timings["encryption_time"],
                 timings["client_hash_time"], 
