@@ -4,4 +4,4 @@ apscheduler
 requests
 paramiko
 pandas
-dotenv
+python-dotenv
