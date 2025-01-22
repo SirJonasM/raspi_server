@@ -3,7 +3,7 @@ set +x
 
 python3 -m venv .venv
 source .venv/bin/activate
-pip3 install -r requirments.txt
+pip3 install -r .requirments
 python3 generate_make_files.py
 python3 run_make_files.py
 cd rust

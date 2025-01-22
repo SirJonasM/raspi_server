@@ -1,6 +1,5 @@
 pycryptodome 
 flask
-apscheduler
 requests
 paramiko
 pandas
