@@ -140,19 +140,25 @@ def download_file(pi_info, remote_path, local_path):
 
 
 def combine_csv(file1, file2, output_file):
+    # Read the CSV files
     df1 = pd.read_csv(file1)
     df2 = pd.read_csv(file2)
+    
+    # Concatenate the dataframes while retaining the headers
     combined_df = pd.concat([df1, df2], ignore_index=True)
-
-    d = os.path.join(os.getcwd(), "output")
-    d = os.path.join(d, output_file)
-    combined_df.to_csv(d, index=False, header=False)
+    
+    # Create output directory if it doesn't exist
+    output_dir = os.path.join(os.getcwd(), "output")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Save the combined dataframe with the header
+    output_path = os.path.join(output_dir, output_file)
+    combined_df.to_csv(output_path, index=False, header=True)
     print(f"Combined {file1} and {file2} into {output_file}")
 
+    # Remove the original files
     os.remove(file1)
     os.remove(file2)
-    print(f"Deleted {file1} and {file2}")
-
 
 def main():
     setup(PI_A)
