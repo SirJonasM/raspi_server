@@ -23,8 +23,9 @@ PI_B = {
 SERVER_SCRIPT = "/home/jonas/git-repos/raspi_server/server.py"
 CLIENT_SCRIPT = "/home/jonas/git-repos/raspi_server/client.py"
 
-RUN_DURATION = 180 
-ITERATIONS = 1 
+RUN_DURATION = 180
+ITERATIONS = 1
+
 
 def check_directory_exists(pi_info, directory):
     """
@@ -63,23 +64,46 @@ def ssh_command(pi_info, command):
 
 
 def setup(pi_info):
-    print("Deleting previous files")
-    command = (
-        "cd /home/jonas/git-repos/raspi_server && "
-        "rm *.csv"
+    """
+    Sets up the Raspberry Pi environment:
+    - Asks the user if they want to delete files before pulling the repository.
+    - Checks for the build directory and installs if missing.
+    - Returns True if installation succeeded, False otherwise.
+    """
+    import getpass
+
+    # Ask the user if they want to delete the files
+    delete_files = (
+        input("Do you want to delete previous files before pulling? (y/n): ")
+        .strip()
+        .lower()
     )
-    out = ssh_command(pi_info, command)
-    command = (
-        "cd /home/jonas/git-repos/raspi_server && "
-        "git pull"
-    )
-    out = ssh_command(pi_info, command)
+    if delete_files == "y":
+        print("Deleting previous files...")
+        command = "cd /home/jonas/git-repos/raspi_server && " "rm -f *.csv"
+        ssh_command(pi_info, command)
+
+    # Pull the latest changes from the repository
+    print("Pulling latest changes from the repository...")
+    command = "cd /home/jonas/git-repos/raspi_server && " "git pull"
+    ssh_command(pi_info, command)
+
+    # Check if the build directory exists
     if not check_directory_exists(pi_info, "/home/jonas/git-repos/raspi_server/build"):
-        command = (
-            "cd /home/jonas/git-repos/raspi_server && "
-            "./install_complete.sh"
-        )
+        print("Build directory is missing. Running install_full.sh...")
+        command = "cd /home/jonas/git-repos/raspi_server && " "./install_full.sh"
         out = ssh_command(pi_info, command)
+
+        # Check if the installation succeeded
+        if "Installation completed" in out:
+            print("Installation succeeded.")
+            return True
+        else:
+            print("Installation failed.")
+            return False
+
+    print("Setup completed without installation.")
+    return True
 
 
 def start_server(pi_info):
@@ -158,14 +182,14 @@ def combine_csv(file1, file2, output_file):
     # Read the CSV files
     df1 = pd.read_csv(file1)
     df2 = pd.read_csv(file2)
-    
+
     # Concatenate the dataframes while retaining the headers
     combined_df = pd.concat([df1, df2], ignore_index=True)
-    
+
     # Create output directory if it doesn't exist
     output_dir = os.path.join(os.getcwd(), "output")
     os.makedirs(output_dir, exist_ok=True)
-    
+
     # Save the combined dataframe with the header
     output_path = os.path.join(output_dir, output_file)
     combined_df.to_csv(output_path, index=False, header=True)
@@ -174,6 +198,7 @@ def combine_csv(file1, file2, output_file):
     # Remove the original files
     os.remove(file1)
     os.remove(file2)
+
 
 def main():
     setup(PI_A)
