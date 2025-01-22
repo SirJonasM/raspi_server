@@ -63,6 +63,7 @@ def ssh_command(pi_info, command):
 
 
 def setup(pi_info):
+    print("Deleting previous files")
     command = (
         "cd /home/jonas/git-repos/raspi_server && "
         "rm *.csv"
@@ -73,8 +74,12 @@ def setup(pi_info):
         "git pull"
     )
     out = ssh_command(pi_info, command)
-    if check_directory_exists(pi_info, "/home/jonas/git-repos/raspi_server/build"):
-        print(f"DIRECTORY does exist on Pi: {pi_info["hostname"]}")
+    if not check_directory_exists(pi_info, "/home/jonas/git-repos/raspi_server/build"):
+        command = (
+            "cd /home/jonas/git-repos/raspi_server && "
+            "./install_complete.sh"
+        )
+        out = ssh_command(pi_info, command)
 
 
 def start_server(pi_info):
