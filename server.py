@@ -30,6 +30,7 @@ def get_key():
 
 def check_and_write_csv(file_name, header):
     if not os.path.exists(file_name):
+        print(f"Writing to file: {file_name}")
         with open(file_name, "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(header)

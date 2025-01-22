@@ -132,7 +132,9 @@ def combine_csv(file1, file2, output_file):
     df2 = pd.read_csv(file2)
     combined_df = pd.concat([df1, df2], ignore_index=True)
 
-    combined_df.to_csv(output_file, index=False, header=False)
+    d = os.path.join(os.getcwd(), "output")
+    d = os.path.join(d, output_file)
+    combined_df.to_csv(d, index=False, header=False)
     print(f"Combined {file1} and {file2} into {output_file}")
 
     os.remove(file1)
