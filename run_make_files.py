@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 # Directory where all the Makefiles are stored
 MAKEFILES_DIR = "./Makefiles"
 
+
 def run_makefile(makefile_path):
     """
     Runs a given Makefile using the `make` command.
@@ -15,12 +16,13 @@ def run_makefile(makefile_path):
             ["make", "-f", makefile_path],
             check=True,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
         )
         print(f"Successfully built {makefile_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error building {makefile_path}:")
         print(e.stderr.decode())
+
 
 def build_all_makefiles():
     """
@@ -30,8 +32,16 @@ def build_all_makefiles():
     if not os.path.exists(MAKEFILES_DIR):
         print(f"Directory {MAKEFILES_DIR} does not exist.")
         return
+    paths = ["./build", "./build/crypto_kem", "./build/crypto_sign"]
 
-    # Collect all Makefile paths
+    # List of paths to check and create
+    paths = ["./build", "./build/crypto_kem", "./build/crypto_sign"]
+
+    # Check and create directories
+    for path in paths:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
     makefile_paths = [
         os.path.join(MAKEFILES_DIR, filename)
         for filename in os.listdir(MAKEFILES_DIR)
@@ -42,6 +52,6 @@ def build_all_makefiles():
     with ThreadPoolExecutor() as executor:
         executor.map(run_makefile, makefile_paths)
 
+
 if __name__ == "__main__":
     build_all_makefiles()
-
