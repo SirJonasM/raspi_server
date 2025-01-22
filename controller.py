@@ -26,6 +26,15 @@ CLIENT_SCRIPT = "/home/jonas/git-repos/raspi_server/client.py"
 RUN_DURATION = 180 
 ITERATIONS = 1 
 
+def check_directory_exists(pi_info, directory):
+    """
+    Checks if a directory exists on the remote system.
+    Returns True if it exists, False otherwise.
+    """
+    command = f"test -d {directory} && echo EXISTS || echo MISSING"
+    result = ssh_command(pi_info, command)
+    return result == "EXISTS"
+
 
 def ssh_command(pi_info, command):
     """
@@ -64,7 +73,8 @@ def setup(pi_info):
         "git pull"
     )
     out = ssh_command(pi_info, command)
-     
+    if check_directory_exists(pi_info, "/home/jonas/git-repos/raspi_server/build"):
+        print(f"DIRECTORY does exist on Pi: {pi_info["hostname"]}")
 
 
 def start_server(pi_info):
