@@ -110,6 +110,7 @@ def main():
         port = int(sys.argv[2])
 
     url = f"http://{server_ip}:{port}/"
+    file_setup()
 
     while True:
         run(url)

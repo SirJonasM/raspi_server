@@ -53,6 +53,20 @@ def ssh_command(pi_info, command):
     return out
 
 
+def setup(pi_info):
+    command = (
+        "cd /home/jonas/git-repos/raspi_server && "
+        "rm *.csv"
+    )
+    out = ssh_command(pi_info, command)
+    command = (
+        "cd /home/jonas/git-repos/raspi_server && "
+        "git pull"
+    )
+    out = ssh_command(pi_info, command)
+     
+
+
 def start_server(pi_info):
     """
     Start the Flask server in the background on the remote Pi.
@@ -81,7 +95,6 @@ def start_client(pi_info, server_ip):
         f"echo $! && exit 0"
     )
     pid = ssh_command(pi_info, command)
-    print(f"[INFO] Client started on {pi_info['hostname']} with PID {pid}")
     return pid
 
 
@@ -93,7 +106,6 @@ def stop_process(pi_info, pid):
         return
     command = f"kill {pid} || true"
     ssh_command(pi_info, command)
-    print(f"[INFO] Killed process {pid} on {pi_info['hostname']}")
 
 
 def download_file(pi_info, remote_path, local_path):
@@ -143,6 +155,8 @@ def combine_csv(file1, file2, output_file):
 
 
 def main():
+    setup(PI_A)
+    setup(PI_B)
     for i in range(ITERATIONS):
         # ----------------------
         # 1) Pi A → SERVER
