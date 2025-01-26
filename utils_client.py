@@ -7,6 +7,16 @@ from Crypto.Util.Padding import pad
 
 
 def hash_message(message, timings):
+    """
+    Computes the SHA-3 256-bit hash of the given message.
+
+    Args:
+        message (str or bytes): The message to be hashed.
+        timings (dict): Dictionary to store timing information.
+
+    Returns:
+        bytes: The computed hash of the message.
+    """
     t = time.time_ns()
     message = message.encode() if isinstance(message, str) else message
     hash_obj = hashlib.sha3_256()
@@ -16,6 +26,17 @@ def hash_message(message, timings):
 
 
 def encrypt_data(aes_key, raw_data, timings):
+    """
+    Encrypts raw data using AES encryption in CBC mode.
+
+    Args:
+        aes_key (bytes): The AES encryption key (32 bytes).
+        raw_data (bytes): The raw data to encrypt.
+        timings (dict): Dictionary to store timing information.
+
+    Returns:
+        tuple: The ciphertext and initialization vector (IV).
+    """
     start_time = time.time_ns()
     cipher = AES.new(aes_key, AES.MODE_CBC)
     ciphertext = cipher.encrypt(pad(raw_data, AES.block_size))
@@ -30,6 +51,19 @@ def encapsulate_key(
     shared_secret_bytes,
     timings,
 ):
+    """
+    Encapsulates a key using a given algorithm and client public key.
+
+    Args:
+        client_public_key (bytes): The client's public key.
+        encapsulate_algorithm (function): Function to perform the encapsulation.
+        cipher_text_bytes (int): Size of the ciphertext buffer.
+        shared_secret_bytes (int): Size of the shared secret buffer.
+        timings (dict): Dictionary to store timing information.
+
+    Returns:
+        tuple: The encapsulated key and shared secret.
+    """
     start_time = time.time_ns()
     encapsulated_key = ctypes.create_string_buffer(cipher_text_bytes)
     shared_secret = ctypes.create_string_buffer(shared_secret_bytes)
@@ -42,6 +76,16 @@ def encapsulate_key(
 
 
 def get_client_public_key(kem_name, url):
+    """
+    Fetches the client's public key from the server.
+
+    Args:
+        kem_name (str): The name of the KEM algorithm.
+        url (str): The server's URL.
+
+    Returns:
+        bytes: The client's public key as bytes.
+    """
     payload = {"kem_name": kem_name}
     response = requests.post(f"{url}/keys", json=payload)
     data = response.json()
@@ -61,6 +105,23 @@ def get_data_to_send(
     sign_private_key,
     sign_bytes,
 ):
+    """
+    Prepares the data to be sent to the server by encrypting, hashing, and signing it.
+
+    Args:
+        raw_data (bytes): The raw data to encrypt.
+        server_public_key (bytes): The server's public key.
+        encapsulation_algorithm (function): Key encapsulation function.
+        cipher_text_bytes (int): Ciphertext buffer size.
+        shared_secret_bytes (int): Shared secret buffer size.
+        sign_algorithm (function): Signing algorithm.
+        sign_public_key (bytes): Public key for signing.
+        sign_private_key (bytes): Private key for signing.
+        sign_bytes (int): Signature buffer size.
+
+    Returns:
+        tuple: The payload dictionary and timings.
+    """
     timings = {}
     encapsulated_key, shared_secret = encapsulate_key(
         server_public_key,
@@ -99,6 +160,25 @@ def send_data(
     sign_bytes,
     url,
 ):
+    """
+    Sends encrypted, signed, and encapsulated data to the server.
+
+    Args:
+        raw_data (bytes): The raw data to send.
+        kem_algo_name (str): Name of the KEM algorithm.
+        kem_algorithm (function): Key encapsulation function.
+        kem_cipher_text_bytes (int): Ciphertext buffer size for KEM.
+        kem_shared_secret_bytes (int): Shared secret buffer size for KEM.
+        sign_algorithm_name (str): Name of the signing algorithm.
+        sign_algorithm (function): Signing function.
+        sign_public_key (bytes): Public key for signing.
+        sign_private_key (bytes): Private key for signing.
+        sign_bytes (int): Signature buffer size.
+        url (str): Server URL.
+
+    Returns:
+        tuple: Server response message and timings.
+    """
     client_public_key = get_client_public_key(kem_algo_name, url)
     payload, timings = get_data_to_send(
         raw_data,
@@ -121,6 +201,19 @@ def send_data(
 
 
 def sign_message(message, sign_algorithm, private_key, signature_bytes, timings):
+    """
+    Signs a message using the provided signing algorithm and private key.
+
+    Args:
+        message (bytes): The message to sign.
+        sign_algorithm (function): Signing algorithm.
+        private_key (bytes): Private key for signing.
+        signature_bytes (int): Signature buffer size.
+        timings (dict): Dictionary to store timing information.
+
+    Returns:
+        bytes: The signature of the message.
+    """
     signature = ctypes.create_string_buffer(signature_bytes)
     sig_len = ctypes.c_size_t()
     start_time = time.time_ns()
@@ -131,3 +224,4 @@ def sign_message(message, sign_algorithm, private_key, signature_bytes, timings)
         raise ValueError("Signing failed")
     timings["sign_time"] = time.time_ns() - start_time
     return signature.raw[: sig_len.value]
+

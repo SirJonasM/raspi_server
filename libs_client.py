@@ -142,6 +142,18 @@ KEM_ALGORITHMS = {
 
 
 def generate_keypair(public_key_size, secret_key_size, algo, name):
+    """
+    Generates a key pair for a given algorithm and logs performance metrics.
+
+    Args:
+        public_key_size (int): Size of the public key in bytes.
+        secret_key_size (int): Size of the private key in bytes.
+        algo (function): Function pointer to the key generation algorithm.
+        name (str): Name of the algorithm (used for logging).
+
+    Returns:
+        dict: Generated public and private keys.
+    """
     import time
     import ctypes
     import csv
@@ -153,7 +165,7 @@ def generate_keypair(public_key_size, secret_key_size, algo, name):
     if result != 0:
         raise ValueError("Key generation failed")
     elapsed_time = time.time() - t
-    with open("key_generation_times.csv", "a")as csvfile:
+    with open("key_generation_times.csv", "a") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([name, elapsed_time])
     with open("key_sizes.csv", "a", newline="") as csvfile:

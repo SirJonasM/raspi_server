@@ -27,6 +27,23 @@ rainbowVclassic_lib = ctypes.CDLL("./build/crypto_sign/librainbowV-classic.so")
 
 
 def generate_keypair(public_key_size, secret_key_size, algo, name):
+    """
+    Generates a public-private key pair for a specified cryptographic algorithm and logs performance.
+
+    Args:
+        public_key_size (int): The size of the public key in bytes.
+        secret_key_size (int): The size of the private key in bytes.
+        algo (function): Function pointer to the key generation algorithm provided by the cryptographic library.
+        name (str): The name of the cryptographic algorithm (used for logging purposes).
+
+    Returns:
+        dict: A dictionary containing the generated keys:
+            - "public_key" (bytes): The generated public key.
+            - "private_key" (bytes): The generated private key.
+
+    Raises:
+        ValueError: If the key generation algorithm fails (non-zero result).
+    """
     import time
     import ctypes
     import csv

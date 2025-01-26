@@ -3,11 +3,7 @@ set -e  # Exit on any error
 
 echo "Starting full installation..."
 
-# Set up Python virtual environment
-if [ ! -d ".venv" ]; then
-    echo "Creating virtual environment..."
-    python3 -m venv .venv
-fi
+python3 -m venv .venv
 
 source .venv/bin/activate
 

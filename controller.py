@@ -27,20 +27,18 @@ RUN_DURATION = 180
 ITERATIONS = 1
 
 
-def check_directory_exists(pi_info, directory):
-    """
-    Checks if a directory exists on the remote system.
-    Returns True if it exists, False otherwise.
-    """
-    command = f"test -d {directory} && echo EXISTS || echo MISSING"
-    result = ssh_command(pi_info, command)
-    return result == "EXISTS"
-
-
 def ssh_command(pi_info, command):
     """
-    Opens an SSH connection to the pi, runs the command, and closes the connection.
-    Returns the output if needed (but here we won't).
+    Opens an SSH connection to the Raspberry Pi, executes the given command, and closes the connection.
+
+    Args:
+        pi_info (dict): Contains connection information for the Raspberry Pi.
+        command (str): The command to execute.
+
+    Returns:
+        str: The output of the command if successful.
+    Prints:
+        Error messages if the command fails.
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -65,52 +63,39 @@ def ssh_command(pi_info, command):
 
 def setup(pi_info):
     """
-    Sets up the Raspberry Pi environment:
-    - Asks the user if they want to delete files before pulling the repository.
-    - Checks for the build directory and installs if missing.
-    - Returns True if installation succeeded, False otherwise.
+    Sets up the Raspberry Pi by removing existing files and running the installation script.
+
+    Args:
+        pi_info (dict): Contains connection information for the Raspberry Pi.
+
+    Returns:
+        bool: True if the setup succeeded, False otherwise.
     """
-    import getpass
-
-    # Ask the user if they want to delete the files
-    delete_files = (
-        input("Do you want to delete previous files before pulling? (y/n): ")
-        .strip()
-        .lower()
-    )
-    if delete_files == "y":
-        print("Deleting previous files...")
-        command = "cd /home/jonas/git-repos/raspi_server && " "rm -f *.csv"
-        ssh_command(pi_info, command)
-
-    # Pull the latest changes from the repository
-    print("Pulling latest changes from the repository...")
-    command = "cd /home/jonas/git-repos/raspi_server && " "git pull"
+    command = "cd /home/jonas/git-repos/raspi_server && " "rm -f *.csv"
     ssh_command(pi_info, command)
 
-    # Check if the build directory exists
-    if not check_directory_exists(pi_info, "/home/jonas/git-repos/raspi_server/build"):
-        print("Build directory is missing. Running install_full.sh...")
-        command = "cd /home/jonas/git-repos/raspi_server && " "./install_full.sh"
-        out = ssh_command(pi_info, command)
+    print("Running install_full.sh...")
+    command = "cd /home/jonas/git-repos/raspi_server && " "./install_full.sh"
+    out = ssh_command(pi_info, command)
 
-        # Check if the installation succeeded
-        if "Installation completed" in out:
-            print("Installation succeeded.")
-            return True
-        else:
-            print("Installation failed.")
-            return False
+    # Check if the installation succeeded
+    if "Installation completed" in out:
+        print("Installation succeeded.")
+        return True
 
-    print("Setup completed without installation.")
-    return True
+    print("Installation failed.")
+    return False
 
 
 def start_server(pi_info):
     """
-    Start the Flask server in the background on the remote Pi.
-    We'll redirect output to server.log for debugging.
-    'nohup' + '&' ensures it keeps running in the background after SSH session ends.
+    Starts the Flask server on the Raspberry Pi in the background.
+
+    Args:
+        pi_info (dict): Contains connection information for the Raspberry Pi.
+
+    Returns:
+        str: The process ID (PID) of the server process.
     """
     command = (
         "cd /home/jonas/git-repos/raspi_server && "
@@ -124,9 +109,14 @@ def start_server(pi_info):
 
 def start_client(pi_info, server_ip):
     """
-    Start the client in the background, passing in the server IP as argument
-    (assuming client.py accepts e.g. `python client.py 192.168.1.10`).
-    We'll also redirect output to client.log.
+    Starts the client process on the Raspberry Pi in the background.
+
+    Args:
+        pi_info (dict): Contains connection information for the Raspberry Pi.
+        server_ip (str): The IP address of the server.
+
+    Returns:
+        str: The process ID (PID) of the client process.
     """
     command = (
         f"cd /home/jonas/git-repos/raspi_server && "
@@ -139,7 +129,11 @@ def start_client(pi_info, server_ip):
 
 def stop_process(pi_info, pid):
     """
-    Kills a process (PID) on the remote Pi.
+    Stops a process on the Raspberry Pi by killing its PID.
+
+    Args:
+        pi_info (dict): Contains connection information for the Raspberry Pi.
+        pid (str): The process ID (PID) to kill.
     """
     if not pid:
         return
@@ -149,12 +143,12 @@ def stop_process(pi_info, pid):
 
 def download_file(pi_info, remote_path, local_path):
     """
-    Downloads a file from the remote Raspberry Pi to the local machine.
+    Downloads a file from the Raspberry Pi to the local machine.
 
-    Parameters:
-        pi_info (dict): Contains connection info for the Raspberry Pi.
-        remote_path (str): The full path to the file on the remote Pi.
-        local_path (str): The local path where the file will be saved.
+    Args:
+        pi_info (dict): Contains connection information for the Raspberry Pi.
+        remote_path (str): The path to the file on the Raspberry Pi.
+        local_path (str): The path where the file will be saved locally.
     """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -179,69 +173,60 @@ def download_file(pi_info, remote_path, local_path):
 
 
 def combine_csv(file1, file2, output_file):
-    # Read the CSV files
+    """
+    Combines two CSV files into a single file and saves it in the output directory.
+
+    Args:
+        file1 (str): Path to the first CSV file.
+        file2 (str): Path to the second CSV file.
+        output_file (str): Name of the output CSV file.
+
+    Side Effects:
+        - Saves the combined CSV file in the `output` directory.
+        - Removes the original files after combining.
+    """
     df1 = pd.read_csv(file1)
     df2 = pd.read_csv(file2)
 
-    # Concatenate the dataframes while retaining the headers
     combined_df = pd.concat([df1, df2], ignore_index=True)
 
-    # Create output directory if it doesn't exist
     output_dir = os.path.join(os.getcwd(), "output")
     os.makedirs(output_dir, exist_ok=True)
 
-    # Save the combined dataframe with the header
     output_path = os.path.join(output_dir, output_file)
     combined_df.to_csv(output_path, index=False, header=True)
     print(f"Combined {file1} and {file2} into {output_file}")
 
-    # Remove the original files
     os.remove(file1)
     os.remove(file2)
 
 
-def main():
-    setup(PI_A)
-    setup(PI_B)
-    for i in range(ITERATIONS):
-        # ----------------------
-        # 1) Pi A → SERVER
-        #    Pi B → CLIENT
-        # ----------------------
-        print("[INFO] Starting Pi A as server, Pi B as client")
+def run_benchmark(pi_a, pi_b):
+    """
+    Executes a single benchmark iteration by running the server on one Raspberry Pi
+    and the client on the other for a fixed duration.
 
-        pid_server_b = start_server(PI_B)
+    Args:
+        pi_a (dict): Information for the first Raspberry Pi (acts as client/server).
+        pi_b (dict): Information for the second Raspberry Pi (acts as server/client).
+    """
+    pid_server_b = start_server(pi_b)
 
-        pid_client_a = start_client(PI_A, PI_B["url"])
+    pid_client_a = start_client(pi_a, pi_b["url"])
 
-        # 2.3) Let them run for RUN_DURATION
-        time.sleep(RUN_DURATION)
+    time.sleep(RUN_DURATION)
 
-        # 2.4) Stop them
-        stop_process(PI_B, pid_server_b)
-        stop_process(PI_A, pid_client_a)
+    stop_process(pi_b, pid_server_b)
+    stop_process(pi_a, pid_client_a)
 
-        # ----------------------
-        # 2) Swap roles:
-        #    Pi B → SERVER
-        #    Pi A → CLIENT
-        # ----------------------
-        print("[INFO] Swapping roles: Pi B as server, Pi A as client")
 
-        # 1.1) Start server on Pi A
-        print("starting Server!")
-        pid_server_a = start_server(PI_A)
-        print("starting Client!")
-        # 1.2) Start client on Pi B (target = Pi A's IP)
-        pid_client_b = start_client(PI_B, PI_A["url"])
-
-        # 1.3) Let them run for RUN_DURATION
-        time.sleep(RUN_DURATION)
-
-        # 1.4) Stop them
-        stop_process(PI_A, pid_server_a)
-        stop_process(PI_B, pid_client_b)
-
+def get_results():
+    """
+    Handles the final steps after benchmarks, including:
+    - Downloading timing and performance CSV files from both Raspberry Pis.
+    - Combining the CSV files into single consolidated files.
+    - Saving the consolidated files locally.
+    """
     download_file(
         PI_A,
         "/home/jonas/git-repos/raspi_server/client_timings.csv",
@@ -289,5 +274,32 @@ def main():
     )
 
 
+def main():
+    """
+    Main function to set up Raspberry Pis, run multiple benchmark iterations,
+    and process the results.
+
+    - Sets up the environment on both Raspberry Pis.
+    - Executes `ITERATIONS` benchmark iterations, swapping server/client roles.
+    - Consolidates results into combined CSV files.
+    """
+    setup(PI_A)
+    setup(PI_B)
+
+    for i in range(ITERATIONS):
+        print(f"[INFO] Iteration {i}")
+        run_benchmark(PI_A, PI_B)
+        print("[INFO] Swapping roles")
+        run_benchmark(PI_B, PI_A)
+
+    get_results()
+
+
 if __name__ == "__main__":
+    """
+    Entry point of the script. Executes the main function to:
+    - Set up Raspberry Pis.
+    - Run benchmarks.
+    - Consolidate results.
+    """
     main()

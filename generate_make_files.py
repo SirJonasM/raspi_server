@@ -31,7 +31,14 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 def find_libraries(base_dir):
     """
     Traverse the base directory to find all library paths under `clean`.
-    Returns a list of (type, library_name) tuples.
+
+    Args:
+        base_dir (str): The base directory to traverse.
+
+    Returns:
+        list: A list of tuples in the form (type, library_name), where:
+            - type (str): The library type (e.g., "crypto_kem" or "crypto_sign").
+            - library_name (str): The name of the library.
     """
     libraries = []
     for root, dirs, _ in os.walk(base_dir):
@@ -47,37 +54,53 @@ def find_libraries(base_dir):
 def create_makefile(type_name, library_name):
     """
     Generate a Makefile for the given library using the template.
+
+    Args:
+        type_name (str): The type of library (e.g., "crypto_kem" or "crypto_sign").
+        library_name (str): The name of the library.
+
+    Side Effects:
+        Creates a Makefile for the specified library in the output directory.
     """
+    # Define the target shared library name
     target_name = f"{library_name}.so"
+
+    # Populate the Makefile template with the library details
     makefile_content = MAKEFILE_TEMPLATE.format(
         target=target_name,
         type=type_name,
         library=library_name
     )
     
-    # Save the Makefile to the output directory
+    # Save the generated Makefile to the output directory
     makefile_path = os.path.join(OUTPUT_DIR, f"Makefile.{library_name}")
     with open(makefile_path, "w") as makefile:
         makefile.write(makefile_content)
+
     print(f"Makefile created for {type_name}/{library_name}: {makefile_path}")
 
-# Main script logic
 def main():
-    # Collect libraries from KEM and SIGN directories
+    """
+    Main script logic to find libraries and generate Makefiles.
+
+    - Collects libraries from `crypto_kem` and `crypto_sign` directories.
+    - Creates a Makefile for each library in the output directory.
+    """
+    # Collect libraries from the KEM and SIGN directories
     kem_libraries = find_libraries(KEM_DIR)
     sign_libraries = find_libraries(SIGN_DIR)
-    for type_name, library_name in sign_libraries:
-        api_path = SIGN_DIR + os.sep + library_name + os.sep + "clean" + os.sep + "api.h"
-        with open(api_path, "r") as api_file:
-            api_file
 
-
+    # Combine all libraries into a single list
     all_libraries = kem_libraries + sign_libraries
-    
+
     # Generate Makefiles for each library
     for type_name, library_name in all_libraries:
         create_makefile(type_name, library_name)
 
 if __name__ == "__main__":
+    """
+    Entry point for the script. Ensures that Makefiles are generated for all libraries
+    under the `crypto_kem` and `crypto_sign` directories in the PQClean base structure.
+    """
     main()
 
