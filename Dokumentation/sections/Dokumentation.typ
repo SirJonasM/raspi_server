@@ -35,7 +35,7 @@
 
 #show: body => title-page(
   title: [Informatik Projekt 2],
-  emails:(
+  emails:( 
     "12mojo1bif@hft-stuttgart.de", 
     "12test11bif@hft-stuttgart.de", 
     "12test21bif@hft-stuttgart.de"
@@ -54,13 +54,17 @@
   number-align: center,
 )
 
-#include "sections/Intro.typ"
+#include "Intro.typ"
+#pagebreak()
 
-#include "sections/Realisation.typ"
+= Realisation
+#pagebreak()
 
 = Further Details
+#pagebreak()
 
 = Evaluation
+#pagebreak()
 
 = Conclusion
 

@@ -1,4 +1,6 @@
+import concurrent.futures
 import time
+import sys
 import paramiko
 import pandas as pd
 import os
@@ -85,6 +87,25 @@ def setup(pi_info):
 
     print("Installation failed.")
     return False
+
+
+def setup_devices():
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        setup_a = executor.submit(setup, PI_A)
+        setup_b = executor.submit(setup, PI_B)
+
+        # As soon as one returns False, exit the program
+        result_a = setup_a.result()
+        result_b = setup_b.result()
+        if not result_a:
+            print(
+                f"[Error] Installation failed on device {PI_A["hostname"]}."
+            )
+        if not result_b:
+            print(
+                f"[Error] Installation failed on device {PI_B["hostname"]}."
+            )
+        return result_a & result_b
 
 
 def start_server(pi_info):
@@ -240,7 +261,7 @@ def get_results():
     combine_csv(
         "client_timings_pi3.csv",
         "client_timings_pi2W.csv",
-        "combined_client_timings.csv",
+        "client_timings.csv",
     )
     download_file(
         PI_B,
@@ -255,7 +276,7 @@ def get_results():
     combine_csv(
         "server_timings_pi3.csv",
         "server_timings_pi2W.csv",
-        "combined_server_timings.csv",
+        "server_timings.csv",
     )
     download_file(
         PI_A,
@@ -270,7 +291,7 @@ def get_results():
     combine_csv(
         "key_generation_times_pi3.csv",
         "key_generation_times_pi2W.csv",
-        "combined_key_generation_times.csv",
+        "key_generation_times.csv",
     )
 
 
@@ -283,9 +304,8 @@ def main():
     - Executes `ITERATIONS` benchmark iterations, swapping server/client roles.
     - Consolidates results into combined CSV files.
     """
-    setup(PI_A)
-    setup(PI_B)
-
+    if not setup_devices():
+        sys.exit(1)
     for i in range(ITERATIONS):
         print(f"[INFO] Iteration {i}")
         run_benchmark(PI_A, PI_B)

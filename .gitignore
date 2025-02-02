@@ -1,4 +1,6 @@
 Makefiles/
+*Zone.Identifier*
+*drawio*
 __pycache__/
 build/
 data.json
