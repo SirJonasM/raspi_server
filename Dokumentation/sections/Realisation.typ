@@ -66,7 +66,7 @@ int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign(
 The Rust implementation has a different header. Therefore there is a wrapper in the rust directory.
 To compile this wrapper and to create the needed binarys there is a shell script to build them. They are also moved into the _build/crypto_kem_ directory. (See Furthere Notes for Rust installation.)
 
-== First implementation:
+== First implementation
 The first implementation we finished was quite different to what is the end result.
 @first shows the communication of the server and client in this case.
 #figure(image("../figures/Draw-1.svg"), caption: [First implementation])<first>

@@ -58,7 +58,7 @@
 
 #include "sections/Realisation.typ"
 
-= Further Details
+#include "sections/Further_Details.typ"
 
 = Evaluation
 
