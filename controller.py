@@ -51,9 +51,23 @@ def ssh_command(pi_info, command):
         password=pi_info.get("password"),
     )
 
-    stdin, stdout, stderr = ssh.exec_command(command)
-    out = stdout.read().decode().strip()
-    err = stderr.read().decode().strip()
+    stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)
+
+
+   # Read and decode the output
+    try:
+        out = stdout.read().decode("utf-8").strip()
+    except UnicodeDecodeError:
+        # Fallback to a more tolerant decoding method
+        out = stdout.read().decode("latin1").strip()
+
+    # Read and decode the errors
+    try:
+        err = stderr.read().decode("utf-8").strip()
+    except UnicodeDecodeError:
+        # Fallback for errors as well
+        err = stderr.read().decode("latin1").strip() 
+    
     ssh.close()
 
     if err:
@@ -73,11 +87,11 @@ def setup(pi_info):
     Returns:
         bool: True if the setup succeeded, False otherwise.
     """
-    command = "cd /home/jonas/git-repos/raspi_server && " "rm -f *.csv"
+    command = "cd /home/jonas/git-repos/raspi_server && rm -f *.csv"
     ssh_command(pi_info, command)
 
     print("Running install_full.sh...")
-    command = "cd /home/jonas/git-repos/raspi_server && " "./install_full.sh"
+    command = "cd /home/jonas/git-repos/raspi_server && ./install_full.sh"
     out = ssh_command(pi_info, command)
 
     # Check if the installation succeeded
@@ -99,11 +113,11 @@ def setup_devices():
         result_b = setup_b.result()
         if not result_a:
             print(
-                f"[Error] Installation failed on device {PI_A["hostname"]}."
+                f"[Error] Installation failed on device {PI_A['hostname']}."
             )
         if not result_b:
             print(
-                f"[Error] Installation failed on device {PI_B["hostname"]}."
+                f"[Error] Installation failed on device {PI_B['hostname']}."
             )
         return result_a & result_b
 
@@ -121,11 +135,9 @@ def start_server(pi_info):
     command = (
         "cd /home/jonas/git-repos/raspi_server && "
         "nohup .venv/bin/python server.py > server.log 2>&1 & "
-        "echo $! && exit 0"
     )
-    pid = ssh_command(pi_info, command)
-    print(f"[INFO] Server started on {pi_info['hostname']} with PID {pid}")
-    return pid
+    ssh_command(pi_info, command)
+    print(f"[INFO] Server started on {pi_info['hostname']} ")
 
 
 def start_client(pi_info, server_ip):
@@ -142,13 +154,11 @@ def start_client(pi_info, server_ip):
     command = (
         f"cd /home/jonas/git-repos/raspi_server && "
         f"nohup .venv/bin/python client.py {server_ip} > client.log 2>&1 & "
-        f"echo $! && exit 0"
     )
-    pid = ssh_command(pi_info, command)
-    return pid
+    ssh_command(pi_info, command)
 
 
-def stop_process(pi_info, pid):
+def stop_process(pi_info, process):
     """
     Stops a process on the Raspberry Pi by killing its PID.
 
@@ -156,9 +166,7 @@ def stop_process(pi_info, pid):
         pi_info (dict): Contains connection information for the Raspberry Pi.
         pid (str): The process ID (PID) to kill.
     """
-    if not pid:
-        return
-    command = f"kill {pid} || true"
+    command = f"pkill -f {process}"
     ssh_command(pi_info, command)
 
 
@@ -231,15 +239,21 @@ def run_benchmark(pi_a, pi_b):
         pi_a (dict): Information for the first Raspberry Pi (acts as client/server).
         pi_b (dict): Information for the second Raspberry Pi (acts as server/client).
     """
-    pid_server_b = start_server(pi_b)
 
-    pid_client_a = start_client(pi_a, pi_b["url"])
+    print(f"[INFO] Starting server on Device {pi_b['hostname']}.")
+    start_server(pi_b)
+
+    print(f"[INFO] Starting client on Device {pi_a['hostname']}.")
+    start_client(pi_a, pi_b["url"])
 
     time.sleep(RUN_DURATION)
+    
+    print(f"[INFO] Killing client on device {pi_a['hostname']}.")
+    stop_process(pi_a, "client.py")
 
-    stop_process(pi_b, pid_server_b)
-    stop_process(pi_a, pid_client_a)
-
+    print(f"[INFO] Killing server on device {pi_b['hostname']}.")
+    stop_process(pi_b, "server.py")
+    
 
 def get_results():
     """
@@ -308,9 +322,9 @@ def main():
         sys.exit(1)
     for i in range(ITERATIONS):
         print(f"[INFO] Iteration {i}")
-        run_benchmark(PI_A, PI_B)
-        print("[INFO] Swapping roles")
         run_benchmark(PI_B, PI_A)
+        print("[INFO] Swapping roles")
+        run_benchmark(PI_A, PI_B)
 
     get_results()
 
