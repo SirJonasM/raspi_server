@@ -2,6 +2,11 @@ import ctypes
 import csv
 import os
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEVICE_NAME = os.getenv("DEVICE_NAME", "Unknown Device")
 
 kyber512rust_lib = ctypes.CDLL("./build/crypto_kem/libkyber512rust.so")
 kyber768rust_lib = ctypes.CDLL("./build/crypto_kem/libkyber768rust.so")
@@ -33,9 +38,6 @@ def write_key_generation_time(name, elapsed_time):
     filename = "key_generation_times.csv"
     file_exists = os.path.isfile(filename)
     
-    # Get device name from environment variable
-    device_name = os.getenv("DEVICE_NAME", "Unknown Device")
-    
     with open(filename, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
         
@@ -44,7 +46,7 @@ def write_key_generation_time(name, elapsed_time):
             writer.writerow(["Name", "Key Generation Time", "Device Name"])
         
         # Write data row
-        writer.writerow([name, elapsed_time, device_name])
+        writer.writerow([name, elapsed_time, DEVICE_NAME])
 
 
 

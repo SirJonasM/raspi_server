@@ -48,8 +48,7 @@ def ssh_command(pi_info, command):
     ssh.connect(
         hostname=pi_info["hostname"],
         username=pi_info["username"],
-        key_filename=pi_info.get("key_filename"),
-        password=pi_info.get("password"),
+        password="jonas",
     )
 
     stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)

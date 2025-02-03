@@ -12,6 +12,7 @@ load_dotenv()
 # URL for data fetch
 url = "https://ogcapi.hft-stuttgart.de/sta/udigit4icity/v1.1/Observations"
 
+
 def fetch():
     """
     Fetches raw data from a specified URL.
@@ -31,8 +32,10 @@ def fetch():
     except Exception as e:
         print(f"Error fetching data: {e}")
 
+
 # Fetch the raw data on initialization
 RAW_DATA = fetch()
+
 
 def check_and_write_csv(file_name, header):
     """
@@ -46,6 +49,7 @@ def check_and_write_csv(file_name, header):
         with open(file_name, "w", newline="") as file:
             writer = csv.writer(file)
             writer.writerow(header)
+
 
 def file_setup():
     """
@@ -61,7 +65,7 @@ def file_setup():
         [
             "KEM Algorithm",
             "Signature Algorithm",
-            "Client Device",
+            "Device Name",
             "Encapsulation Time",
             "Encryption Time",
             "Client Hash Time",
@@ -72,6 +76,7 @@ def file_setup():
     with open("key_sizes_client.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["name", "public_key_size", "secret_key_size"])
+
 
 def write_timings(timings, kem_algorithm, sign_algorithm):
     """
@@ -98,6 +103,7 @@ def write_timings(timings, kem_algorithm, sign_algorithm):
             ]
         )
 
+
 def run(url):
     """
     Iterates over all KEM and signature algorithms, sending data to the server and logging timings.
@@ -123,15 +129,18 @@ def run(url):
                     url,
                 )
                 # Log the timings
-                write_timings(timings, kem_algorithm["identifier"], sign_algorithm["identifier"])
+                write_timings(
+                    timings, kem_algorithm["identifier"], sign_algorithm["identifier"]
+                )
             except Exception as e:
                 print("Error with", kem_algorithm["identifier"], str(e))
                 print("Server Error, maybe Restarting")
                 time.sleep(5)
 
+
 def main():
     """
-    Entry point for the client application. Sets up necessary files, processes command-line arguments, 
+    Entry point for the client application. Sets up necessary files, processes command-line arguments,
     and continuously sends data to the server.
 
     Command-Line Usage:
@@ -157,9 +166,9 @@ def main():
     while True:
         run(url)
 
+
 if __name__ == "__main__":
     """
     Initializes and runs the client application if the script is executed directly.
     """
     main()
-

@@ -1,4 +1,5 @@
 pycryptodome 
+matplotlib
 flask
 requests
 paramiko

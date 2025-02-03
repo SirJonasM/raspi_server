@@ -2,6 +2,11 @@ import ctypes
 import csv
 import os
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEVICE_NAME = os.getenv("DEVICE_NAME", "Unknown Device")
 
 kyber512rust_lib = ctypes.CDLL("./build/crypto_kem/libkyber512rust.so")
 kyber768rust_lib = ctypes.CDLL("./build/crypto_kem/libkyber768rust.so")
@@ -143,22 +148,20 @@ KEM_ALGORITHMS = {
     },
 }
 
+
 def write_key_generation_time(name, elapsed_time):
     filename = "key_generation_times.csv"
     file_exists = os.path.isfile(filename)
-    
-    # Get device name from environment variable
-    device_name = os.getenv("DEVICE_NAME", "Unknown Device")
-    
+
     with open(filename, "a", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        
+
         # Write header if file does not exist
         if not file_exists:
             writer.writerow(["Name", "Key Generation Time", "Device Name"])
-        
+
         # Write data row
-        writer.writerow([name, elapsed_time, device_name])
+        writer.writerow([name, elapsed_time, DEVICE_NAME])
 
 
 def generate_keypair(public_key_size, secret_key_size, algo, name):
@@ -182,7 +185,7 @@ def generate_keypair(public_key_size, secret_key_size, algo, name):
     if result != 0:
         raise ValueError("Key generation failed")
     elapsed_time = time.time() - t
-    
+
     write_key_generation_time(name, elapsed_time)
 
     with open("key_sizes.csv", "a", newline="") as csvfile:
