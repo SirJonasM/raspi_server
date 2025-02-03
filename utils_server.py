@@ -144,7 +144,7 @@ def write_timings_to_file(
         client_device,
         timings["server_hash_time"],
         timings["verify_time"],
-        timings["decapulation_time"],
+        timings["decapsulation_time"],
         timings["decrypt_time"],
         message_size,
     ]
