@@ -29,6 +29,7 @@ RUN_DURATION = 180
 ITERATIONS = 1
 
 
+
 def ssh_command(pi_info, command):
     """
     Opens an SSH connection to the Raspberry Pi, executes the given command, and closes the connection.
@@ -53,21 +54,16 @@ def ssh_command(pi_info, command):
 
     stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)
 
-
-   # Read and decode the output
     try:
         out = stdout.read().decode("utf-8").strip()
     except UnicodeDecodeError:
-        # Fallback to a more tolerant decoding method
         out = stdout.read().decode("latin1").strip()
 
-    # Read and decode the errors
     try:
         err = stderr.read().decode("utf-8").strip()
     except UnicodeDecodeError:
-        # Fallback for errors as well
         err = stderr.read().decode("latin1").strip() 
-    
+
     ssh.close()
 
     if err:
@@ -124,50 +120,46 @@ def setup_devices():
 
 def start_server(pi_info):
     """
-    Starts the Flask server on the Raspberry Pi in the background.
+    Starts the Flask server on the Raspberry Pi inside a tmux session.
 
     Args:
         pi_info (dict): Contains connection information for the Raspberry Pi.
-
-    Returns:
-        str: The process ID (PID) of the server process.
     """
     command = (
         "cd /home/jonas/git-repos/raspi_server && "
-        "nohup .venv/bin/python server.py > server.log 2>&1 & "
+        "tmux new-session -d -s tmux_server '.venv/bin/python server.py'"
     )
     ssh_command(pi_info, command)
-    print(f"[INFO] Server started on {pi_info['hostname']} ")
+    print(f"[INFO] Server started on {pi_info['hostname']} (tmux session: tmux_server)")
 
 
 def start_client(pi_info, server_ip):
     """
-    Starts the client process on the Raspberry Pi in the background.
+    Starts the client process on the Raspberry Pi inside a tmux session.
 
     Args:
         pi_info (dict): Contains connection information for the Raspberry Pi.
         server_ip (str): The IP address of the server.
-
-    Returns:
-        str: The process ID (PID) of the client process.
     """
     command = (
         f"cd /home/jonas/git-repos/raspi_server && "
-        f"nohup .venv/bin/python client.py {server_ip} > client.log 2>&1 & "
+        f"tmux new-session -d -s tmux_client '.venv/bin/python client.py {server_ip}'"
     )
     ssh_command(pi_info, command)
+    print(f"[INFO] Client started on {pi_info['hostname']} (tmux session: tmux_client)")
 
 
-def stop_process(pi_info, process):
+def stop_process(pi_info, session_name):
     """
-    Stops a process on the Raspberry Pi by killing its PID.
+    Stops a process running inside a tmux session.
 
     Args:
         pi_info (dict): Contains connection information for the Raspberry Pi.
-        pid (str): The process ID (PID) to kill.
+        session_name (str): The name of the tmux session to kill.
     """
-    command = f"pkill -f {process}"
+    command = f"tmux kill-session -t {session_name}"
     ssh_command(pi_info, command)
+    print(f"[INFO] Stopped process on {pi_info['hostname']} (tmux session: {session_name})")
 
 
 def download_file(pi_info, remote_path, local_path):
@@ -249,10 +241,10 @@ def run_benchmark(pi_a, pi_b):
     time.sleep(RUN_DURATION)
     
     print(f"[INFO] Killing client on device {pi_a['hostname']}.")
-    stop_process(pi_a, "client.py")
+    stop_process(pi_a, "tmux_client")
 
     print(f"[INFO] Killing server on device {pi_b['hostname']}.")
-    stop_process(pi_b, "server.py")
+    stop_process(pi_b, "tmux_server")
     
 
 def get_results():
