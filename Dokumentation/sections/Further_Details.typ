@@ -1,11 +1,24 @@
 = Further Notes
-Here are some minor details that are important to run the benchmark correctly.
-- .env files: Create .env files in the directory like this:
+This section provides important details to ensure the benchmark runs correctly.
+
+== Environment Files (.env)
+- Create .env files in the respective directories with the following format:
 ```env
 DEVICE_NAME=<Device name>
 ```
-this how the server and client get the name to write to in the CSV-Files.
-- The controller script uses an shell script to make sure everything is installed. If not it tries to install everything and then runs the benchmark. Should there be an error in the installation process it wont run the benchmark.
-- The controller script will run the complete installation process. This includes the creation of the binaries from the PQClean library and the Rust wrapper.
-- The controller script uses ssh keys to authenticate. This seems not to work with rsa keys. ``` ssh-keygen -t ed25519``` works.
-
+- The server and client retrieve their names from these files to correctly log data in the CSV files.
+== Controller Script and Installation Process
+- The controller script includes a shell script that ensures all required dependencies are installed before running the benchmark.
+- If any installation step fails, the benchmark will not start to prevent incomplete or inconsistent results.
+- The controller script automatically performs the full installation process, including:
+  - Compiling the necessary binaries from the PQClean library.
+  - Building the Rust wrapper.
+== SSH Authentication
+- The controller script authenticates via SSH keys.
+- RSA keys seem to cause issues with authentication.
+- Instead, generate an Ed25519 SSH key using the following command:
+```sh
+ssh-keygen -t ed25519
+```
+== Rust installation
+- Install only the minimal Rust toolchain on the Raspberry Pis, as the full toolchain is too large and unnecessary for this project.

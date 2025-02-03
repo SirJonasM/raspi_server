@@ -37,12 +37,12 @@
   title: [Informatik Projekt 2],
   emails:(
     "12mojo1bif@hft-stuttgart.de", 
-    "12test11bif@hft-stuttgart.de", 
-    "12test21bif@hft-stuttgart.de"
+    "22alay1bif@hft-stuttgart.de",
+    "12haombif@hft-stuttgart.de"
   ),
   group: "4",
   members: (
-    "Jonas Möwes", "Ayham", "Omar" 
+    "Jonas Möwes", "Ayham Alhasan", "Omar Haj Abdulaziz" 
   ),
   body
 )
@@ -58,7 +58,10 @@
 
 #include "sections/Realisation.typ"
 
+#include "sections/Data.typ"
+
 #include "sections/Further_Details.typ"
+
 
 = Evaluation
 
