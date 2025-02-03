@@ -5,6 +5,7 @@ import os
 
 app = Flask(__name__)
 
+
 @app.route("/", methods=["POST"])
 def home():
     """
@@ -48,53 +49,9 @@ def get_key():
     return get_kem_key(kem_name)
 
 
-def check_and_write_csv(file_name, header):
-    """
-    Checks if a CSV file exists. If not, creates it with the specified header.
-
-    Args:
-        file_name (str): The name of the CSV file.
-        header (list of str): List of column headers for the CSV file.
-    """
-    if not os.path.exists(file_name):
-        print(f"Writing to file: {file_name}")
-        with open(file_name, "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(header)
-
-
-def file_setup():
-    """
-    Sets up necessary CSV files for logging key generation and server timings.
-
-    Creates the following files if they do not already exist:
-        - "key_generation_times.csv" with columns: "name", "Key Generation Time", "Device Name"
-        - "server_timings.csv" with columns: 
-            "KEM Algorithm", "Signature Algorithm", "Server Hash Time", 
-            "Verify Time", "Decapsulation Time", "Decrypt Time", 
-            "Device Name", "Encrypted Data Size"
-    """
-    check_and_write_csv(
-        "server_timings.csv",
-        [
-            "KEM Algorithm",
-            "Signature Algorithm",
-            "Server Hash Time",
-            "Verify Time",
-            "Decapsulation Time",
-            "Decrypt Time",
-            "Device Name",
-            "Encrypted Data Size",
-        ],
-    )
-
-# Initialize required files on server startup
-file_setup()
-
 if __name__ == "__main__":
     """
     Entry point for the Flask application. Starts the server on host 0.0.0.0 and port 5000.
     Debug mode is disabled for production use.
     """
     app.run(host="0.0.0.0", port=5000, debug=False)
-

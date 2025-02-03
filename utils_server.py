@@ -11,6 +11,7 @@ import os
 
 load_dotenv()
 
+
 def hash_message(message, timings):
     """
     Computes the SHA-3 256-bit hash of the given message.
@@ -30,7 +31,9 @@ def hash_message(message, timings):
     return hash_obj.digest()
 
 
-def verify_signature(sign_algorithm_name, cipher_text, signature, sign_pub_key, timings):
+def verify_signature(
+    sign_algorithm_name, cipher_text, signature, sign_pub_key, timings
+):
     """
     Verifies the signature of a ciphertext using the specified signature algorithm.
 
@@ -45,12 +48,16 @@ def verify_signature(sign_algorithm_name, cipher_text, signature, sign_pub_key, 
         bool: True if the signature is valid, False otherwise.
     """
     hashed_cipher_text = hash_message(cipher_text, timings)
-    verify_signature_algo = SIGNATURE_ALGORITHMS[sign_algorithm_name]["verify_algorithm"]
+    verify_signature_algo = SIGNATURE_ALGORITHMS[sign_algorithm_name][
+        "verify_algorithm"
+    ]
 
     # Prepare pointers for signature, message, and public key
     sig_ptr = (ctypes.c_uint8 * len(signature)).from_buffer_copy(signature)
     sig_len = ctypes.c_size_t(len(signature))
-    msg_ptr = (ctypes.c_uint8 * len(hashed_cipher_text)).from_buffer_copy(hashed_cipher_text)
+    msg_ptr = (ctypes.c_uint8 * len(hashed_cipher_text)).from_buffer_copy(
+        hashed_cipher_text
+    )
     msg_len = ctypes.c_size_t(len(hashed_cipher_text))
     pk_ptr = (ctypes.c_uint8 * len(sign_pub_key)).from_buffer_copy(sign_pub_key)
 
@@ -99,7 +106,9 @@ def decapsulate_aes_key(secret_key_encrypted, kem_algo_name, timings):
     ss_buffer = ctypes.create_string_buffer(kem_algo_secret_bytes)
 
     # Prepare pointers for ciphertext and private key
-    ct_ptr = (ctypes.c_uint8 * len(secret_key_encrypted)).from_buffer_copy(secret_key_encrypted)
+    ct_ptr = (ctypes.c_uint8 * len(secret_key_encrypted)).from_buffer_copy(
+        secret_key_encrypted
+    )
     sk_ptr = (ctypes.c_uint8 * len(kem_private_key)).from_buffer_copy(kem_private_key)
 
     start_time = time.time_ns()
@@ -112,7 +121,13 @@ def decapsulate_aes_key(secret_key_encrypted, kem_algo_name, timings):
     return ss_buffer.raw
 
 
-def write_timings_to_file(timings, kem_algo_name, sign_algorithm_name, output_file="server_timings.csv"):
+def write_timings_to_file(
+    timings,
+    kem_algo_name,
+    sign_algorithm_name,
+    message_size,
+    output_file="server_timings.csv",
+):
     """
     Writes the collected timing information to a CSV file.
 
@@ -123,7 +138,31 @@ def write_timings_to_file(timings, kem_algo_name, sign_algorithm_name, output_fi
         output_file (str): Path to the output CSV file (default is 'server_timings.csv').
     """
     client_device = os.getenv("DEVICE_NAME")
-    data_row = [kem_algo_name, sign_algorithm_name, client_device] + list(timings.values())
+    data_row = [
+        kem_algo_name,
+        sign_algorithm_name,
+        client_device,
+        timings["server_hash_time"],
+        timings["verify_time"],
+        timings["decapulation_time"],
+        timings["decrypt_time"],
+        message_size,
+    ]
+    if not os.path.exists(output_file):
+        with open(output_file, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(
+                [
+                    "KEM Algorithm",
+                    "Signature Algorithm",
+                    "Device Name",
+                    "Server Hash Time",
+                    "Verify Time",
+                    "Decapsulation Time",
+                    "Decrypt Time",
+                    "Encrypted Data Size",
+                ]
+            )
 
     with open(output_file, mode="a", newline="") as csvfile:
         writer = csv.writer(csvfile)
@@ -178,7 +217,7 @@ def handle_client_message(
     message = decrypt_message(aes_key[:32], iv_bytes, cipher_text_bytes, timings)
 
     # Write timings to a CSV file
-    write_timings_to_file(timings, kem_algo_name, sign_algorithm_name)
+    write_timings_to_file(timings, kem_algo_name, sign_algorithm_name, len(message))
 
     return {"message": message}, 200
 
@@ -195,4 +234,3 @@ def get_kem_key(kem_name):
     """
     key = KEM_ALGORITHMS[kem_name]["public_key"]
     return jsonify({"server_public_key": key.hex()})
-

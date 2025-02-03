@@ -46,8 +46,8 @@ def plot_metric(data, errors, xlabel, ylabel, title, output_filename, max_error_
 
 def main():
     # Loop through each device and generate plots
-    for device in server_timings_df['Server Device'].unique():
-        device_data = server_timings_df[server_timings_df['Server Device'] == device]
+    for device in server_timings_df['Device Name'].unique():
+        device_data = server_timings_df[server_timings_df['Device Name'] == device]
         device_output_folder = os.path.join(output_folder, device.replace(" ", "_"))
         os.makedirs(device_output_folder, exist_ok=True)
 

@@ -55,8 +55,8 @@ def plot_metric(data, metric, xlabel, ylabel, title, output_filename):
 
 def main():
     # Loop through each device and generate plots
-    for device in client_timings_df['Client Device'].unique():
-        device_data = client_timings_df[client_timings_df['Client Device'] == device]
+    for device in client_timings_df['Device Name'].unique():
+        device_data = client_timings_df[client_timings_df['Device Name'] == device]
         device_output_folder = os.path.join(output_folder, device.replace(" ", "_"))
         os.makedirs(device_output_folder, exist_ok=True)
 
@@ -87,5 +87,5 @@ def main():
             output_filename=os.path.join(device_output_folder, 'sign_time_signature.png'),
         )
 
-if name == "__main__":
+if __name__ == "__main__":
     main()
