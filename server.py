@@ -75,9 +75,6 @@ def file_setup():
             "Device Name", "Encrypted Data Size"
     """
     check_and_write_csv(
-        "key_generation_times.csv", ["name", "Key Generation Time", "Device Name"]
-    )
-    check_and_write_csv(
         "server_timings.csv",
         [
             "KEM Algorithm",
