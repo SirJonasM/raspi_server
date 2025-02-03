@@ -57,9 +57,6 @@ def file_setup():
         - "key_sizes_client.csv" for logging key sizes.
     """
     check_and_write_csv(
-        "key_generation_times.csv", ["name", "Key Generation Time", "Device Name"]
-    )
-    check_and_write_csv(
         "client_timings.csv",
         [
             "KEM Algorithm",
